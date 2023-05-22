@@ -4,6 +4,7 @@
     "my-static-web-app": {
       "appLocation": "react-app",
       "apiLocation": "api",
+      "dataApiLocation": "db-config",
       "outputLocation": "build",
       "apiLanguage": "node",
       "apiVersion": "16",
