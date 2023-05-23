@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom'; 
-import * as cosmosDB from '../services/database';
+// import * as cosmosDB from '../services/database';
 import { connect } from 'react-redux';
 import { useSelector } from 'react-redux';
 

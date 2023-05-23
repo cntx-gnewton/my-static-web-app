@@ -17,10 +17,7 @@
     "host": {
       "mode": "production",
       "cors": {
-        "origins": [
-          "http://localhost:4280", 
-          "https://kind-meadow-08a41c10f.3.azurestaticapps.net"
-        ],
+        "origins": ["https://kind-meadow-08a41c10f.3.azurestaticapps.net"],
         "allow-credentials": false
       },
       "authentication": {
