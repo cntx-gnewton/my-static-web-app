@@ -11,15 +11,14 @@ const options = {
   key: config.key,
   userAgentSuffix: 'CosmosDBJavascriptQuickstart'
 };
+
 const client = new CosmosClient(options);
 
 export async function list() {
   console.log(`Querying container:\n${containerId}`);
-
   const querySpec = {
     query: 'SELECT r.id, r.Name FROM root r',
   };
-  
   try {
     const { resources: results } = await client
       .database(databaseId)

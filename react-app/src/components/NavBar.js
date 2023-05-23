@@ -15,7 +15,7 @@ const NavBar = (props) => {
     (async () => {
       const userInfo = await getUserInfo();
       props.setUserInfo(userInfo); // dispatch action to Redux store
-      await cosmosDB.list();
+      // await cosmosDB.list();
     })();
   }, []);
 

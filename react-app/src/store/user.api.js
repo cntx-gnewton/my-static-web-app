@@ -1,3 +1,16 @@
+// import { parseItem, parseList } from './action-utils';
+
+
+// export const addProductApi = async (product) => {
+//   const response = await axios.post(`${API}/products`, product);
+//   return parseItem(response, 201);
+// };
+
+// export const loadProductsApi = async () => {
+//   const response = await axios.get(`${API}/products`);
+//   return parseList(response, 200);
+// };
+
 
 
 // export const handleFileUploaded = (file) => {
