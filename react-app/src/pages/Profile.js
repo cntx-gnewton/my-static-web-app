@@ -12,13 +12,22 @@ const Profile = () => {
   const openFilePicker = () => {
   fileInputRef.current.click();
   };
-
+  
+  const handleCreateUser = () => {
+    // Replace these values with the actual user id, user name, and products
+    const userId = userInfo.userId;
+    const userName = userInfo.userDetails;
+    const products = userProducts;
+    userDB.createUserWithProducts(userId, userName, products);
+  };
   const handleFileUpload = (event) => {
     const files = event.target.files;
     if (files.length > 0) {
         const file = files[0];
         // Emit the fileUploaded event
         handleFileUploaded(file, setProducts);
+        // After the products have been set, create the user
+        handleCreateUser();
     } else {
         alert('Please select a file first...');
     }
@@ -34,15 +43,6 @@ const Profile = () => {
     console.log(userInfo);
     console.log(userProducts);
   }
-  // const handleCreateUser = () => {
-    // Replace these values with the actual user id, user name, and products
-    // const userId = userInfo.userId;
-    // const userName = userInfo.userDetails;
-    // const products = userProducts;
-    // userDB.createUserWithProducts(userId, userName, products);
-  // };
-
-
 
   useEffect(() => {
     // Fetch the user's data when the component is mounted
