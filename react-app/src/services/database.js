@@ -3,28 +3,43 @@ import { CosmosClient } from '@azure/cosmos';
 // eslint-disable-next-line import/no-unresolved
 import config from './config';
 
-const endpoint = config.endpoint;
-const key = config.key;
-
 const databaseId = config.database.id;
 const containerId = config.container.id;
 const partitionKey = { kind: 'Hash', paths: ['/partitionKey'] };
-
 const options = {
-  endpoint: endpoint,
-  key: key,
+  endpoint: config.endpoint,
+  key: config.key,
   userAgentSuffix: 'CosmosDBJavascriptQuickstart'
 };
-
 const client = new CosmosClient(options);
 
+export async function list() {
+  console.log(`Querying container:\n${containerId}`);
+
+  const querySpec = {
+    query: 'SELECT r.id, r.Name FROM root r',
+  };
+  
+  try {
+    const { resources: results } = await client
+      .database(databaseId)
+      .container(containerId)
+      .items.query(querySpec)
+      .fetchAll();
+    console.table(results);
+  } catch (error) {
+    console.error('Error in list(): ' + error);
+  }
+}
+/**
+ * Create the database if it does not exist
+ */
 export const createDatabase = async () => {
   const { database } = await client.databases.createIfNotExists({
     id: databaseId
   });
-  console.log(`Created database:\n${database.id}\n`);
+  console.log(`Created database:\n${databaseId}\n`);
 };
-
 /**
  * Read the database definition
  */
