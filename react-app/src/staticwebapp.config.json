@@ -8,5 +8,27 @@
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["*.{css,scss,js,png,gif,ico,jpg,svg}"]
+  },
+  "auth": {
+      "identityProviders": {
+          "customOpenIdConnectProviders": {
+              "aadb2c": {
+                  "registration": {
+                      "clientIdSettingName": "AADB2C_PROVIDER_CLIENT_ID",
+                      "clientCredential": {
+                      "clientSecretSettingName": "AADB2C_PROVIDER_CLIENT_SECRET"
+                      },
+                      "openIdConnectConfiguration": {
+                      "wellKnownOpenIdConfiguration": "https://cosnetixb2c.b2clogin.com/cosnetixb2c.onmicrosoft.com/B2C_1_susi/v2.0/.well-known/openid-configuration"
+                      }
+                  },
+                  "login": {
+                      "nameClaimType": "emails",
+                      "scopes": ["openid"],
+                      "loginParameterNames": []
+                  }
+              }
+          }
+      }
   }
 }

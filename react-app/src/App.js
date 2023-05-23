@@ -1,14 +1,10 @@
-import React, { Component, lazy, Suspense } from 'react';
+import React, { Component, Suspense } from 'react';
 import 'bulma/css/bulma.css';
 import './styles.scss';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { withRouter } from 'react-router';
 import { HeaderBar, NavBar, NotFound } from './components';
-import About from './About';
-
-const Products = withRouter(
-  lazy(() => import(/* webpackChunkName: "products" */ './products/Products'))
-);
+import { Home, About } from './pages'
+import Profile from './pages/Profile'
 
 class App extends Component {
   render() {
@@ -20,9 +16,10 @@ class App extends Component {
           <main className="column">
             <Suspense fallback={<div>Loading...</div>}>
               <Switch>
-                <Redirect from="/" exact to="/products" />
-                <Route path="/products" component={Products} />
+                <Redirect from="/" exact to="/home" />
+                <Route path="/home" component={Home} />
                 <Route path="/about" component={About} />
+                <Route path="/profile" component={Profile} />
                 <Route exact path="**" component={NotFound} />
               </Switch>
             </Suspense>

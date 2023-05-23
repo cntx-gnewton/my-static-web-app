@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { NavLink, Link } from 'react-router-dom'; 
 import * as cosmosDB from '../services/database';
+import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
+
 
 const NavBar = (props) => {
-  const providers = ['twitter', 'github', 'aad'];
+  const providers = ['twitter', 'github', 'aad', 'aadb2c'];
   const redirect = window.location.pathname;
-  const [userInfo, setUserInfo] = useState(); // https://stackoverflow.com/questions/53165945/what-is-usestate-in-react
-
+  const userInfo = useSelector(state => state.userInfo);
+  // const [userInfo, setUserInfo] = useState(); // https://stackoverflow.com/questions/53165945/what-is-usestate-in-react
+  
   useEffect(() => {
     (async () => {
-      setUserInfo(await getUserInfo());
+      const userInfo = await getUserInfo();
+      props.setUserInfo(userInfo); // dispatch action to Redux store
       await cosmosDB.list();
     })();
   }, []);
@@ -26,33 +31,6 @@ const NavBar = (props) => {
       return undefined;
     }
   }
-  // async function list() {
-
-  //   const query = `
-  //       {
-  //         people {
-  //           items {
-  //             id
-  //             Name
-  //           }
-  //         }
-  //       }`;
-        
-  //   const endpoint = '/data-api/graphql';
-  //   const response = await fetch(endpoint, {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ query: query })
-  //   });
-  //   try {
-  //     const result = await response.json();
-  //     console.table(result.data.people.items);
-  //   }
-  //   catch (error) {
-  //     console.error('Error list()'+error);
-  //   }
-  // }
-
   return (
     <div className="column is-2">
       {/* <button  onClick={ list() }>List</button> */}
@@ -83,14 +61,17 @@ const NavBar = (props) => {
       {userInfo && (
         <div>
           <div className="user">
-            <p>Welcome</p>
-            <p>{userInfo && userInfo.userDetails}</p>
-            <p>{userInfo && userInfo.identityProvider}</p>
+             <Link to="/profile">{userInfo && userInfo.userDetails}</Link>
           </div>
         </div>
       )}
     </div>
   );
 };
-
-export default NavBar;
+const mapDispatchToProps = (dispatch) => ({
+  setUserInfo: (userInfo) => dispatch({ type: 'SET_USER_INFO', payload: userInfo }),
+});
+const mapStateToProps = (state) => ({
+  userInfo: state.userInfo,
+});
+export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

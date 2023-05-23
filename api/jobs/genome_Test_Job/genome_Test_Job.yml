@@ -1,0 +1,11 @@
+metadata:
+  name: genome_Test_Job
+  namespace: C:/Users/greys/projects/cosnetix-marketplace/api/jobs/genome_Test_Job
+  config: C:/Users/greys/projects/cosnetix-marketplace/api/jobs/genome_Test_Job.yml
+risk_threshold: 0.3
+delimiter: \t
+names:
+  - SNP
+  - Chromosome
+  - Position
+  - Genotype

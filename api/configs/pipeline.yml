@@ -1,0 +1,9 @@
+snp_pipeline:
+  namespaces:
+    configs: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/configs"
+    jobs: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/jobs"
+    src: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src"
+  externals:
+    snp_data: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src/external/SNPData.xlsx"
+    products: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src/external/products.xlsx"
+    ingredients: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src/external/ingredients.xlsx"

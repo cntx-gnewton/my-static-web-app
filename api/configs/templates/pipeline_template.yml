@@ -1,0 +1,9 @@
+snp_pipeline:
+  namespaces:
+    configs: "{{ api_path }}/configs"
+    jobs: "{{ api_path }}/jobs"
+    src: "{{ api_path }}/src"
+  externals:
+    snp_data: "{{ api_path }}/src/external/SNPData.xlsx"
+    products: "{{ api_path }}/src/external/products.xlsx"
+    ingredients: "{{ api_path }}/src/external/ingredients.xlsx"

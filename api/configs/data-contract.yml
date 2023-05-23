@@ -1,0 +1,102 @@
+Datastore:
+  path: C:\data_lake\gold\cosnetix-pipeline
+
+Product:
+  id: "pid"
+  name: product
+  source: 'external/scraped'
+  external: /Users/greysonnewton/Library/CloudStorage/OneDrive-Personal/cosnetix-pipeline/cosnetix_pipeline/external/scraped/products.xlsx
+  collections:
+    raw: raw
+    interim: interim
+    processed: processed
+  columns:
+    name: "str"
+    brand: "str"
+    type: "str"
+    description: "str"
+    benefit_list: "dict"
+    aspect_list: "list"
+    ingredient_list: "list"
+    concern_list: "dict"
+    directions: "str"
+
+Ingredient:
+  id: "iid"
+  name: ingredient
+  source: 'external/scraped'
+  external: /Users/greysonnewton/Library/CloudStorage/OneDrive-Personal/cosnetix-pipeline/cosnetix_pipeline/external/scraped/ingredients.xlsx
+  collections:
+    raw: raw
+    interim: interim
+    processed: processed
+  columns: 
+    name: "str"
+    alias: "str"
+    type: "str"
+    description: "str"
+    n_products: "int"
+    likes: "int"
+    dislikes: "int"
+    rating: "str"
+    concentration: "float"
+    category: "str"
+    references: "str"
+    cosing_data: "str"
+    common_products: "str"
+
+GenomicProcessing:
+  name: GenomicProcessing
+  source: https://my.pgp-hms.org/public_genetic_data
+  collections:
+    raw: raw
+    interim: interim
+    processed: processed
+  work_dir: C:\Users\greys\projects\cosnetix_pipeline\external\genome\genome_greyson_newton
+  name:  genome_Greyson_Newton
+  input_file: C:\Users\greys\projects\cosnetix_pipeline\external\genome\genome_greyson_newton\genome_Greyson_Newton.txt
+  output_dir: C:\Users\greys\projects\cosnetix_pipeline\external\genome\genome_greyson_newton
+  column_aliases:
+    genotype: reference
+  columns:
+    chromosome: str
+    position: int
+    rsid: str
+    reference: str
+    alternate: str
+
+Plink:
+  id: "plid"
+  input_file: C:\Users\greys\projects\cosnetix_pipeline\external\genome\genomicSample.txt
+  output_file: yeet_bitch
+  name: plink
+  collections:
+    raw: raw
+    interim: interim
+    processed: processed
+
+Genome:
+  id: "gid"
+  name: genome
+  external: C:\Users\greys\projects\cosnetix_pipeline\external\genome
+  output: _genome_sample
+  collections:
+    raw: raw
+    interim: interim
+    processed: processed
+
+Association:
+  id: "aid"
+  name: association
+  collections:
+    raw: raw
+    interim: interim
+    processed: processed
+
+User:
+  id: "uid"
+  name: user
+  collections:
+    raw: raw
+    interim: interim
+    processed: processed

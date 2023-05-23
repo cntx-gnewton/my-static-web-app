@@ -1,0 +1,9 @@
+user_job:
+  delimiter: "\t"
+  name: genome_Greyson_Newton
+  names:
+  - SNP
+  - Chromosome
+  - Position
+  - Genotype
+  risk_threshold: 0.3
