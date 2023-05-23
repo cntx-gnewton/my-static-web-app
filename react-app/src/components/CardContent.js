@@ -1,3 +1,5 @@
+// components/CardContent.js
+
 import React from 'react';
 
 const CardContent = ({ name, description }) => (

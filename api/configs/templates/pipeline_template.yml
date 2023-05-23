@@ -4,6 +4,6 @@ snp_pipeline:
     jobs: "{{ api_path }}/jobs"
     src: "{{ api_path }}/src"
   externals:
-    snp_data: "{{ api_path }}/src/external/SNPData.xlsx"
-    products: "{{ api_path }}/src/external/products.xlsx"
-    ingredients: "{{ api_path }}/src/external/ingredients.xlsx"
+    snp_data: "{{ api_path }}/src/external/snp/v1/SNPData.xlsx"
+    products: "{{ api_path }}/src/external/products/v2/products.xlsx"
+    ingredients: "{{ api_path }}/src/external/ingredients/v1/ingredients.xlsx"

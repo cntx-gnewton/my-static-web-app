@@ -1,50 +1,36 @@
 import React, { useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom'; 
-// import * as cosmosDB from '../services/database';
-import { connect } from 'react-redux';
-import { useSelector } from 'react-redux';
 
+import * as cosmosDB from '../services/cosmos.services';
+import { getUserInfo } from '../services/api.userInfo';
+import { useManage } from '../store';
 
-const NavBar = (props) => {
+const NavBar = () => {
   const providers = ['twitter', 'github', 'aad', 'aadb2c'];
   const redirect = window.location.pathname;
-  const userInfo = useSelector(state => state.userInfo);
-  // const [userInfo, setUserInfo] = useState(); // https://stackoverflow.com/questions/53165945/what-is-usestate-in-react
+  const { setUser, userInfo } = useManage();
   
   useEffect(() => {
     (async () => {
       const userInfo = await getUserInfo();
-      props.setUserInfo(userInfo); // dispatch action to Redux store
-      // await cosmosDB.list();
+      setUser(userInfo);
+      // setUser(await getUserInfo()); // dispatch action directly here
+      await cosmosDB.list();
     })();
-  }, []);
+  }, []); // pass an empty array as the dependency array
 
-  async function getUserInfo() {
-    try {
-      const response = await fetch('/.auth/me');
-      const payload = await response.json();
-      const { clientPrincipal } = payload;
-      return clientPrincipal;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('No profile could be found');
-      return undefined;
-    }
-  }
   return (
     <div className="column is-2">
-      {/* <button  onClick={ list() }>List</button> */}
       <nav className="menu">
         <p className="menu-label">Menu</p>
         <ul className="menu-list">
-          <NavLink to="/products" activeClassName="active-link">
-            Products
+          <NavLink to="/home" activeClassName="active-link">
+            Home
           </NavLink>
           <NavLink to="/about" activeClassName="active-link">
             About
           </NavLink>
         </ul>
-        {props.children}
       </nav>
       <nav className="menu auth">
         <p className="menu-label">Auth</p>
@@ -68,10 +54,6 @@ const NavBar = (props) => {
     </div>
   );
 };
-const mapDispatchToProps = (dispatch) => ({
-  setUserInfo: (userInfo) => dispatch({ type: 'SET_USER_INFO', payload: userInfo }),
-});
-const mapStateToProps = (state) => ({
-  userInfo: state.userInfo,
-});
-export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
+
+
+export default NavBar;

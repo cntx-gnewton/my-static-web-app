@@ -4,7 +4,7 @@
     "my-static-web-app": {
       "appLocation": "react-app",
       "apiLocation": "api",
-      "dataApiLocation": "db-config",
+      "dataApiLocation": "swa-db-connections",
       "outputLocation": "build",
       "apiLanguage": "python",
       "apiVersion": "3.10",

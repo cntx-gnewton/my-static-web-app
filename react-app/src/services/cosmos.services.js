@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
+
 import { CosmosClient } from '@azure/cosmos';
-// eslint-disable-next-line import/no-unresolved
-import config from './config';
+
+import config from './cosmos.config';
 
 const databaseId = config.database.id;
 const containerId = config.container.id;
 const partitionKey = { kind: 'Hash', paths: ['/partitionKey'] };
+
 const options = {
   endpoint: config.endpoint,
   key: config.key,
@@ -13,6 +15,62 @@ const options = {
 };
 
 const client = new CosmosClient(options);
+
+export async function createUserWithProducts(userId, userName, products) {
+  const user = {
+    id: userId,
+    name: userName,
+    products: products,
+  };
+
+  const { item } = await client
+    .database(databaseId)
+    .container(containerId)
+    .items.upsert(user);
+
+  console.log(`Created user with id:\n${userId}\n`);
+}
+
+export async function getUserById(userId) {
+  const { resource: user } = await client
+    .database(databaseId)
+    .container(containerId)
+    .item(userId)
+    .read();
+
+  return user;
+}
+
+
+
+
+export async function createUser(userInfo) {
+  const { item } = await client
+    .database(databaseId)
+    .container(containerId)
+    .items.upsert(userInfo);
+  console.log(`Created user with id:\n${userInfo.id}\n`);
+}
+
+export async function addUserProduct(userId, product) {
+  // Fetch the user's document
+  const { resource: user } = await client
+    .database(databaseId)
+    .container(containerId)
+    .item(userId)
+    .read();
+  // Add the new product to the products array
+  user.products.push(product);
+  // Save the updated document back to the database
+  const { item } = await client
+    .database(databaseId)
+    .container(containerId)
+    .item(userId)
+    .replace(user);
+
+  console.log(`Added product to user with id:\n${userId}\n`);
+}
+
 
 export async function list() {
   console.log(`Querying container:\n${containerId}`);
@@ -48,7 +106,6 @@ export async function readDatabase() {
     .read()
   console.log(`Reading database:\n${databaseDefinition.id}\n`)
 }
-
 /**
  * Create the container if it does not exist
  */
@@ -60,7 +117,6 @@ export async function createContainer() {
     )
   console.log(`Created container:\n${config.container.id}\n`)
 }
-
 /**
  * Read the container definition
  */

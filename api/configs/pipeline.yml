@@ -4,6 +4,6 @@ snp_pipeline:
     jobs: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/jobs"
     src: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src"
   externals:
-    snp_data: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src/external/SNPData.xlsx"
-    products: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src/external/products.xlsx"
-    ingredients: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src/external/ingredients.xlsx"
+    snp_data: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src/external/snp/v1/SNPData.xlsx"
+    products: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src/external/products/v2/products.xlsx"
+    ingredients: "C:/Users/greys/projects/azure-swa/my-static-web-app/api/src/external/ingredients/v1/ingredients.xlsx"
