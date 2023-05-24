@@ -2,12 +2,10 @@ name: Azure Static Web Apps CI/CD
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main , python-api ]
   pull_request:
     types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
+    branches: [ main , python-api ]
 
 jobs:
   build_and_deploy_job:
@@ -29,7 +27,7 @@ jobs:
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           app_location: "react-app" # App source code path
           api_location: "api" # Api source code path - optional
-          data_api_location: "db-config"
+          data_api_location: "swa-db-connections"
           output_location: "build" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 

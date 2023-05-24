@@ -1,0 +1,1 @@
+['lactic acid', 'jojoba oil', 'willow bark extract', 'niacinamide', 'salicylic acid', 'hyaluronic acid', 'squalane', 'witch hazel', 'tea tree oil', 'glycolic acid', 'bentonite clay', 'aloe vera', 'kaolin clay', 'zinc pca', 'sulfur']

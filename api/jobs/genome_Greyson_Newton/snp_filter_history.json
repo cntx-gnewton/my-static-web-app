@@ -1,0 +1,31 @@
+{
+    "filter_concerns": {
+        "concerns": [
+            "Oily Skin"
+        ],
+        "removed_products": 6730,
+        "remaining_products": 1483
+    },
+    "filter_ingredients": {
+        "ingredients": [
+            "synthetic dyes",
+            "fragrances (perfume, parfum)",
+            "silicones (dimethicone, cyclomethicone)",
+            "cocoa butter",
+            "coconut oil",
+            "shea butter",
+            "sodium lauryl sulfate (sls)",
+            "alcohol (sd alcohol, denatured alcohol)",
+            "petrolatum",
+            "isopropyl myristate",
+            "ammonium lauryl sulfate (als)",
+            "isopropyl palmitate",
+            "sodium laureth sulfate (sles)",
+            "lanolin",
+            "mineral oil"
+        ],
+        "removed_products": 195,
+        "remaining_products": 1288
+    },
+    "proc_time": "2023-05-23 09:28:34.994638+00:00"
+}

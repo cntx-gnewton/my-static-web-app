@@ -1,0 +1,11 @@
+metadata:
+  name: genome_Greyson_Newton
+  namespace: C:/Users/greys/projects/azure-swa/my-static-web-app/api/jobs/genome_Greyson_Newton
+  config: C:/Users/greys/projects/azure-swa/my-static-web-app/api/jobs/genome_Greyson_Newton.yml
+risk_threshold: 0.3
+delimiter: \t
+names:
+  - SNP
+  - Chromosome
+  - Position
+  - Genotype

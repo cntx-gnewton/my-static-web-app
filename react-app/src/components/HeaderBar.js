@@ -1,3 +1,5 @@
+// ./components/HeaderBar.js
+
 import React from 'react';
 import HeaderBarBrand from './HeaderBarBrand';
 

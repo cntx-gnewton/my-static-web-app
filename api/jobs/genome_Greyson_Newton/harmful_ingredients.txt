@@ -1,0 +1,1 @@
+['synthetic dyes', 'fragrances (perfume, parfum)', 'silicones (dimethicone, cyclomethicone)', 'cocoa butter', 'coconut oil', 'shea butter', 'sodium lauryl sulfate (sls)', 'alcohol (sd alcohol, denatured alcohol)', 'petrolatum', 'isopropyl myristate', 'ammonium lauryl sulfate (als)', 'isopropyl palmitate', 'sodium laureth sulfate (sles)', 'lanolin', 'mineral oil']
