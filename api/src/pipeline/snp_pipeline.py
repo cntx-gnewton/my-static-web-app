@@ -4,6 +4,7 @@ from .utils.helpers import *
 from .utils.calcs import min_max_normalization
 from os.path import join
 import logging
+
 class SNP_Pipeline:
     def __init__(
         self,
@@ -35,7 +36,11 @@ class SNP_Pipeline:
         job_config = read_yaml(job_config) if isinstance(
             job_config, str) else job_config
         logging.info(f'job_name: {job_config["metadata"]["name"]}')
-        # Process SNP sample (get at-risk skin_conditions)
+        
+        # insert quetionnaire filtering results
+        
+        # generate snp_skin_conditions risk_table -> conditions to prevent and
+        # harmful ingredients, helpful ingredients
         self.snp_condition_processor.process(job_config)
 
         # Start Filtering Products

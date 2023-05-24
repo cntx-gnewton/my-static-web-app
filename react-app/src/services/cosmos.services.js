@@ -41,9 +41,6 @@ export async function getUserById(userId) {
   return user;
 }
 
-
-
-
 export async function createUser(userInfo) {
   const { item } = await client
     .database(databaseId)
@@ -75,7 +72,7 @@ export async function addUserProduct(userId, product) {
 export async function list() {
   console.log(`Querying container:\n${containerId}`);
   const querySpec = {
-    query: 'SELECT r.id, r.Name FROM root r',
+    query: 'SELECT r.id, r.name, r.products FROM root r',
   };
   try {
     const { resources: results } = await client
