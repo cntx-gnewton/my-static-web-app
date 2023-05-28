@@ -43,6 +43,15 @@
           "role": "anonymous"
         }
       ]
+    },
+    "UserDetails": {
+      "source": "CNTXUserDatabase",
+      "permissions": [
+        {
+          "actions": ["read"],
+          "role": "anonymous"
+        }
+      ]
     }
   }
 }

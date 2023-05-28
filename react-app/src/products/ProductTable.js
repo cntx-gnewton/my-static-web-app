@@ -1,10 +1,10 @@
 // components/ProductsTable.js
 import React from 'react';
 import ProductCard from './ProductCard';
-import { useManage } from '../store'; 
+import { useStore } from '../store'; 
 
 const ProductTable = () => {
-  const { userProducts } = useManage();
+  const { userProducts } = useStore();
 
   return (
     <div className="products-table">

@@ -1,3 +1,4 @@
+// ./services/cosmos.services.js
 /* eslint-disable no-unused-vars */
 
 import { CosmosClient } from '@azure/cosmos';
@@ -16,37 +17,52 @@ const options = {
 
 const client = new CosmosClient(options);
 
-export async function createUserWithProducts(userId, userName, products) {
+export async function getUserInfoById(userId) {
+  const { resource: user } = await client
+    .database(databaseId)
+    .container(containerId)
+    .item(userId)
+    .read();
+  return user;
+}
+
+export async function getUserProductsById(userId) {
+  try {
+    const { resource: user } = await client
+      .database(databaseId)
+      .container(containerId)
+      .item(userId)
+      .read();
+
+    return user.products || null;
+  } catch (error) {
+    console.error(`Error getting products for user ${userId}:`, error);
+    return null;
+  }
+}
+
+export async function createUser(userInfo) {
+  console.log('cosmos createUser: userInfo', userInfo)
   const user = {
-    id: userId,
-    name: userName,
-    products: products,
+    id: userInfo.userId,
+    name: userInfo.userDetails,
+    products: [],
   };
 
   const { item } = await client
     .database(databaseId)
     .container(containerId)
     .items.upsert(user);
-
-  console.log(`Created user with id:\n${userId}\n`);
+  console.log(`Created user :${user.name} | ${user.id}\n`);
 }
 
-export async function getUserById(userId) {
-  const { resource: user } = await client
+export async function deleteUser(userId) {
+  await client
     .database(databaseId)
     .container(containerId)
     .item(userId)
-    .read();
-
-  return user;
-}
-
-export async function createUser(userInfo) {
-  const { item } = await client
-    .database(databaseId)
-    .container(containerId)
-    .items.upsert(userInfo);
-  console.log(`Created user with id:\n${userInfo.id}\n`);
+    .delete();
+  console.log(`Deleted user with id:\n${userId}\n`);
 }
 
 export async function addUserProduct(userId, product) {
@@ -67,7 +83,42 @@ export async function addUserProduct(userId, product) {
 
   console.log(`Added product to user with id:\n${userId}\n`);
 }
+export async function addUserProducts(userId, products) {
+  // Fetch the user's document
+  const { resource: user } = await client
+    .database(databaseId)
+    .container(containerId)
+    .item(userId)
+    .read();
+  // Loop through the products and push them to the user's products array
+  for (const product of products) {
+    user.products.push(product);
+  }
+  // Save the updated document back to the database
+  const { item } = await client
+    .database(databaseId)
+    .container(containerId)
+    .item(userId)
+    .replace(user);
 
+  console.log(`Added product to user with id:\n${userId}\n`);
+}
+
+
+export async function createUserWithProducts(userId, userName, products) {
+  const user = {
+    id: userId,
+    name: userName,
+    products: products,
+  };
+
+  const { item } = await client
+    .database(databaseId)
+    .container(containerId)
+    .items.upsert(user);
+
+  console.log(`Created user with id:\n${userId}\n`);
+}
 
 export async function list() {
   console.log(`Querying container:\n${containerId}`);
@@ -235,10 +286,17 @@ export async function deleteFamilyItem(itemBody) {
 /**
  * Cleanup the database and collection on completion
  */
-export async function cleanup() {
+export async function deleteDatabase() {
   await client.database(databaseId).delete()
+  console.log(`Deleted database:\n${config.container.id}\n`);
 }
-
+export async function deleteContainer() {
+  await client
+    .database(databaseId)
+    .container(containerId)
+    .delete()
+  console.log(`Deleted container:\n${config.container.id}\n`);
+}
 /**
  * Exit the app with a prompt
  * @param {string} message - The message to display
