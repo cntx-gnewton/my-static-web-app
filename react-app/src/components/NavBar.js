@@ -1,33 +1,41 @@
+// Filename: components/NavBar.js
+// Description: This file contains the NavBar component which is in charge of logging the user in and out.
 import React, { useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom'; 
-
-import { getUserInfo } from '../services/handlers';
+import { getUserAuthInfo } from '../services/api';
 import { useStore } from '../store';
 
 const NavBar = () => {
-  const providers = ['twitter', 'github', 'aad', 'aadb2c'];
   const profileRedirect = '/profile';
   const homeRedirect = '/home';
-  const { initializeUser, logoutUser, userInfo } = useStore(); // get the logout function from useStore
-  
+  const loginURI = `/.auth/login/aad?post_login_redirect_uri=${profileRedirect}`
+  const logoutURI = `/.auth/logout?post_logout_redirect_uri=${homeRedirect}`
+  const { user, loginUser, logoutUser } = useStore();
   useEffect(() => {
     (async () => {
-      const userInfo = await getUserInfo();
-      if (userInfo) { // Check if userInfo is not null or undefined
-        console.log('User signed in, waiting to initializing user');
-        await initializeUser(userInfo);
+      const userAuthInfo = await getUserAuthInfo();
+      if (userAuthInfo) { // Check if userAuthInfo is not null or undefined
+        console.log('User authenticated, logging in user');
+        loginUser(userAuthInfo);
       } else {
         console.log('Not logged in');
       }
     })();
-  }, [initializeUser]); // Add initializeUser to the dependency array
+  }, [loginUser]); // Add loginUser to the dependency array
 
+  // useEffect(() => {
+  //   console.log('user changed')
+  //   if(user) {
+  //     console.log('User data:', user);
+  //     user.print();
+  //   }
+  // }, [user]); // This effect will run whenever the 'user' state changes
 
-  // Handle logout
   const handleLogout = () => {
-    logoutUser(); // clear user data from the store
+    // clear user from  store
+    logoutUser();
     // redirect to logout URI
-    window.location.href = `/.auth/logout?post_logout_redirect_uri=${homeRedirect}`;
+    window.location.href = logoutURI;
   };
 
   return (
@@ -46,19 +54,14 @@ const NavBar = () => {
       <nav className="menu auth">
         <p className="menu-label">Auth</p>
         <div className="menu-list auth">
-          {!userInfo &&
-            providers.map((provider) => (
-              <a key={provider} href={`/.auth/login/${provider}?post_login_redirect_uri=${profileRedirect}`}>
-                {provider}
-              </a>
-            ))}
-          {userInfo && <button onClick={handleLogout}>Logout</button>}{/* Add onClick handler to Logout link */}
+          {!user && <a href={loginURI}>Login</a>}
+          {user && <button onClick={handleLogout}>Logout</button>}{/* Add onClick handler to Logout link */}
         </div>
       </nav>
-      {userInfo && (
+      {user && (
         <div>
           <div className="user">
-             <Link to="/profile">{userInfo && userInfo.userDetails}</Link>
+             <Link to="/profile">{user && user.displayName}</Link>
           </div>
         </div>
       )}

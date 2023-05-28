@@ -2,13 +2,11 @@
 /* eslint-disable no-unused-vars */
 
 import { CosmosClient } from '@azure/cosmos';
-
-import config from './cosmos.config';
+import { UserDatabaseConfig as config } from './databaseConfig.user';
 
 const databaseId = config.database.id;
 const containerId = config.container.id;
 const partitionKey = { kind: 'Hash', paths: ['/partitionKey'] };
-
 const options = {
   endpoint: config.endpoint,
   key: config.key,
@@ -17,7 +15,7 @@ const options = {
 
 const client = new CosmosClient(options);
 
-export async function getUserInfoById(userId) {
+export async function getUser(userId) {
   const { resource: user } = await client
     .database(databaseId)
     .container(containerId)
@@ -26,7 +24,7 @@ export async function getUserInfoById(userId) {
   return user;
 }
 
-export async function getUserProductsById(userId) {
+export async function getProducts(userId) {
   try {
     const { resource: user } = await client
       .database(databaseId)
@@ -41,20 +39,29 @@ export async function getUserProductsById(userId) {
   }
 }
 
-export async function createUser(userInfo) {
-  console.log('cosmos createUser: userInfo', userInfo)
-  const user = {
-    id: userInfo.userId,
-    name: userInfo.userDetails,
-    products: [],
-  };
-
-  const { item } = await client
-    .database(databaseId)
-    .container(containerId)
+export async function createUser(user) {
+  const { item } = await this.client
+    .database(this.databaseId)
+    .container(this.containerId)
     .items.upsert(user);
-  console.log(`Created user :${user.name} | ${user.id}\n`);
-}
+  return item;
+};
+
+
+// export async function createUser(userInfo) {
+//   console.log('cosmos createUser: userInfo', userInfo)
+//   const user = {
+//     id: userInfo.userId,
+//     name: userInfo.userDetails,
+//     products: [],
+//   };
+
+//   const { item } = await client
+//     .database(databaseId)
+//     .container(containerId)
+//     .items.upsert(user);
+//   console.log(`Created user :${user.name} | ${user.id}\n`);
+// }
 
 export async function deleteUser(userId) {
   await client

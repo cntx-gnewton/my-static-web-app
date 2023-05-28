@@ -1,11 +1,9 @@
-// ./pages/Profile.js
 import React, { useRef } from 'react';
-import ProductTable from '../products/ProductTable'; 
 import { useStore } from '../store';
+// import ProductTable from '../products/ProductTable'; 
 
 const Profile = () => {
-  const { userInfo, userProducts, generateUserProducts } = useStore();
-
+  const { user } = useStore();
   const fileInputRef = useRef(null);
 
   const openFilePicker = () => {
@@ -16,10 +14,8 @@ const Profile = () => {
     const files = event.target.files;
     if (files.length > 0) {
         const file = files[0];
-        // Emit the fileUploaded event
-        // const products = await handleUserProducts(file);
         console.log('userSNP file inputted')
-        generateUserProducts(userInfo, file);
+        user.generateProducts(file)
     } else {
         alert('Please select a file first...');
     }
@@ -27,10 +23,10 @@ const Profile = () => {
 
   return (
     <div className="content-container">
-      {!userProducts.length && (
+      {user && !user.hasProducts && (
         <>
           <div className="content-title-group not-found">
-            <h2 className="title">Welcome {userInfo && userInfo.userDetails}!</h2>
+            <h2 className="title">Welcome {user && user.data.name}!</h2>
             <p>
               Congratulations on taking the first step towards a healthier you! We are excited to help you on your journey
             </p>
@@ -50,7 +46,7 @@ const Profile = () => {
           </div>
         </>
       )}     
-      <ProductTable />
+      {/* <ProductTable /> */}
     </div>
   );
 };

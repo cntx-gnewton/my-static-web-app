@@ -1,8 +1,9 @@
 // ./services/index.js
 
 import { getUserInfo, runSNPPipeline } from './handlers.js';
-import { config } from './cosmos.config';
-import * as userDB from './cosmos.services';
+import { config } from './databaseConfig.user';
+import DatabaseClient from './databaseClient.js';
+import * as userDB from './cosmos.services';  
 
 function useCosmos() {
   return {
@@ -16,15 +17,16 @@ function useCosmos() {
     deleteContainer: userDB.deleteContainer,
     deleteDatabase: userDB.deleteDatabase,
     deleteUser: userDB.deleteUser,
-    getUserInfo: userDB.getUserInfoById,
-    getUserProductsById: userDB.getUserProductsById,
+    getUserInfo: userDB.getUser,
+    getProducts: userDB.getProducts,
     addUserProducts: userDB.addUserProducts,
   };
 }
 
 export {
-    useCosmos,
-    userDB,
-    getUserInfo,
-    runSNPPipeline,
+  DatabaseClient,
+  useCosmos,
+  userDB,
+  getUserInfo,
+  runSNPPipeline,
 }
