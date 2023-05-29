@@ -204,6 +204,7 @@ def split_filepath(filepath):
 
 
 def mkdir(filepath):
+    filepath = str(filepath)
     os.makedirs(filepath, exist_ok=True)
     return filepath
 

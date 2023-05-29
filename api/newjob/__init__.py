@@ -5,7 +5,6 @@ from os.path import join
 import logging
 
 from src.pipeline.utils.helpers import *
-from src.pipeline.snp_new_job import new_job
 from src.pipeline.snp_pipeline import SNP_Pipeline
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
@@ -45,7 +44,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     },
                     to_dict=True
                 )
-                process_23andme(file, pipeline_config['namespaces']['jobs'])
+                job_dir = mkdir(pipeline_config['namespaces']['jobs'])
+                process_23andme(file, job_dir)
                 
                 logging.info(f"File uploaded: {file.filename}")
                 logging.info(f"Running SNPipeline Job")
