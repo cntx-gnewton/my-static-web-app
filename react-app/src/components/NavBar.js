@@ -19,7 +19,7 @@ const NavBar = () => {
         console.log(`User ${savedUser ? 'found' : 'not found'} in database`)
         if (savedUser) {
           await userActions.set(savedUser);
-          console.log('User set in store', products)
+          console.log('User set in store', savedUser)
           if (savedUser.products.length > 0) {
             await productActions.set(savedUser.products);
             console.log('Products set in store',products)

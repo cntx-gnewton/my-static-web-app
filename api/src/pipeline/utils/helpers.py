@@ -8,7 +8,7 @@ import os
 import logging
 from typing import *
 from datetime import datetime
-
+import logging
 
 from typing import Any, Dict, Optional, Union
 from jinja2 import Environment, FileSystemLoader
@@ -227,13 +227,14 @@ def write_txt(obj, file_path: str, remove_comments=False):
 
 
 def process_23andme(input_file, file_path: str) -> None:
+    logging.info(f'process_23andme: {input_file.filename} | {file_path=} ')
     file_content = input_file.stream.read().decode("utf-8")
     file_path = join(file_path, input_file.filename)
     # Filter out lines that start with "#"
     filtered_content = "\n".join(
         [line for line in file_content.splitlines() if not line.startswith("#")])
-
-    with open(file_path, 'w') as output_file:
+    
+    with open(file_path, 'w+') as output_file:
         output_file.write(filtered_content)
         
     print(f'23andMe Processed WRITE: {file_path}')

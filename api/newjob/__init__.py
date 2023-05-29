@@ -1,3 +1,5 @@
+# Filename: api/newjob/__init__.py
+# Description: This file contains the code for the newjob endpoint of the API.
 import azure.functions as func
 from os.path import join
 import logging
@@ -5,12 +7,6 @@ import logging
 from src.pipeline.utils.helpers import *
 from src.pipeline.snp_new_job import new_job
 from src.pipeline.snp_pipeline import SNP_Pipeline
-
-# if 'API_PATH' not in os.environ:
-#     from dotenv import load_dotenv
-#     load_dotenv()
-
-
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('NewJob endpoint triggered.')
@@ -29,7 +25,6 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if content_type and "multipart/form-data" in content_type:
             
             # Read the uploaded file
-
             file = req.files.get("file")
             logging.info(type(file))
             if file:

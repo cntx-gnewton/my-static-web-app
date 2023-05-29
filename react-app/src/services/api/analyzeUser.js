@@ -1,4 +1,5 @@
-
+// Filename: services\api\analyzeUser.js
+// Description: Runs the api call to the backend to analyze the user's genome
 export const runProductPipeline = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
