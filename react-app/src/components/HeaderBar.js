@@ -3,25 +3,24 @@ import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 import HeaderBarBrand from './HeaderBarBrand';
 import { useStore } from '../store'; // import useStore
-import { useCosmos } from '../services';
+import { userDB } from '../services';
 
 const HeaderBar = () => {
-  const { userInfo, userProducts } = useStore(); // get userInfo and userProducts from useStore
-  const { userDB } = useCosmos();
+  const { userInfo, products, userId } = useStore(); // get userInfo and userProducts from useStore
 
   // Define the log functions
   const logUserInfo = () => { console.log(userInfo); }
-  const logUserProducts = () => { console.log(userProducts); }
-  const logUserList = () => { console.log(userDB.list()); }
+  const logUserProducts = () => { console.log(products); }
+  const logUserList = () => { console.log(userDB.listUsers()); }
 
   const createDatabase = () => { userDB.createDatabase(); }
   const deleteDatabase = () => { userDB.deleteDatabase(); }
   
   const deleteContainer = () => { userDB.deleteContainer(); }
   const createContainer = () => { userDB.createContainer(); }
+
   const deleteUser = () => {
-    userDB.deleteUser(userInfo.userId);
-    userDB.list();
+    userDB.deleteUser(userId);
   }
   return (
     <header>

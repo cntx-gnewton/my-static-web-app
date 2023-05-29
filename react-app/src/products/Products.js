@@ -12,9 +12,9 @@ function Products({ history }) {
   const [productToDelete, setProductToDelete] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const {
-    addProduct,
+    pushProducts,
     deleteProduct,
-    getProducts,
+    pullProducts,
     products,
     selectProduct,
     selectedProduct,
@@ -22,8 +22,8 @@ function Products({ history }) {
   } = useProducts();
 
   useEffect(() => {
-    getProducts();
-  }, [getProducts]);
+    pullProducts();
+  }, [pullProducts]);
 
   function addNewProduct() {
     selectProduct({});
@@ -47,7 +47,7 @@ function Products({ history }) {
       captains.log(product);
       updateProduct(product);
     } else {
-      addProduct(product);
+      pushProducts(product);
     }
     handleCancelProduct();
   }
@@ -69,7 +69,7 @@ function Products({ history }) {
 
   function handleRefresh() {
     handleCancelProduct();
-    getProducts();
+    pullProducts();
   }
 
   return (

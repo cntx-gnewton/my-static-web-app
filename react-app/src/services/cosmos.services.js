@@ -41,8 +41,8 @@ export async function getUserProductsById(userId) {
   }
 }
 
-export async function createUser(userInfo) {
-  console.log('cosmos createUser: userInfo', userInfo)
+export async function pushUser(userInfo) {
+  console.log('cosmos pushUser: userInfo', userInfo)
   const user = {
     id: userInfo.userId,
     name: userInfo.userDetails,

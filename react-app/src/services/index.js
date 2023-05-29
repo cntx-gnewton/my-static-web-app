@@ -1,30 +1,30 @@
 // ./services/index.js
 
-import { getUserInfo, runSNPPipeline } from './handlers.js';
-import { config } from './cosmos.config';
-import * as userDB from './cosmos.services';
+import {
+  runProductPipeline,
+  getUserAuthInfo, 
+} from './api';
+ 
+import {
+  DatabaseClient,
+  databaseConfigs,
+} from './database';
 
-function useCosmos() {
+const userDB = new DatabaseClient(databaseConfigs.user);
+
+function userServices() {
   return {
-    userDB: userDB,
-    userInfo: getUserInfo,
-    userPipeline: runSNPPipeline,
-    config: config,
-    createUser: userDB.createUser,
-    createContainer: userDB.createContainer,
-    createDatabase: userDB.createDatabase,
-    deleteContainer: userDB.deleteContainer,
-    deleteDatabase: userDB.deleteDatabase,
-    deleteUser: userDB.deleteUser,
-    getUserInfo: userDB.getUserInfoById,
-    getUserProductsById: userDB.getUserProductsById,
-    addUserProducts: userDB.addUserProducts,
-  };
-}
+    api: {
+      getUserAuthInfo: getUserAuthInfo,
+      runProductPipeline: runProductPipeline
+    },
+    db: userDB,
+  }
+};
 
 export {
-    useCosmos,
-    userDB,
-    getUserInfo,
-    runSNPPipeline,
+  userServices,
+  getUserAuthInfo,
+  runProductPipeline,
+  userDB,
 }

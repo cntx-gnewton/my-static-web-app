@@ -2,59 +2,78 @@
 
 import { configureStore } from '@reduxjs/toolkit';
 import {
-  SET_USER_INFO,
-  SET_USER_PRODUCTS,
+  SET_USER,
+  SET_PRODUCTS,
 
-  CREATE_USER_START,
-  CREATE_USER_SUCCESS,
-  CREATE_USER_ERROR,
+  PUSH_USER_START,
+  PUSH_USER_SUCCESS,
+  PUSH_USER_ERROR,
+  PULL_USER_START,
+  PULL_USER_SUCCESS,
+  PULL_USER_ERROR,
+  LOGOUT_USER, 
 
-  FETCH_USER_INFO_START,
-  FETCH_USER_INFO_SUCCESS,
-  FETCH_USER_INFO_ERROR,
-
-  FETCH_USER_PRODUCTS_START,
-  FETCH_USER_PRODUCTS_SUCCESS,
-  FETCH_USER_PRODUCTS_ERROR,
+  PUSH_PRODUCTS_START,
+  PUSH_PRODUCTS_SUCCESS,
+  PUSH_PRODUCTS_ERROR,
+  PULL_PRODUCTS_START,
+  PULL_PRODUCTS_SUCCESS,
+  PULL_PRODUCTS_ERROR,
+  GENERATE_PRODUCTS_START,
+  GENERATE_PRODUCTS_SUCCESS,
+  GENERATE_PRODUCTS_ERROR,
   
-  LOGOUT_USER, // import the LOGOUT_USER action
 } from './user.actions';
 
 const initialState = {
   userId: null,
   userInfo: null,
-  userLoggedIn: false,
+  loggedIn: false,
   creatingUser: false,
-  userProducts: [],
+  products: [],
   productCount: 0,
 };
 
 function reducer(state = initialState, action) {
   switch (action.type) {
 
-    case SET_USER_INFO:
-      return { ...state, userInfo: action.payload, userId: action.userId };
-    case SET_USER_PRODUCTS:
-      return { ...state, userProducts: action.payload, productCount: action.payload.length };
+    case SET_USER:
+      return { ...state, userInfo: action.payload, userId: action.userId, loggedIn: true };
+    case SET_PRODUCTS:
+      return { ...state, products: action.payload, productCount: action.payload.length };
 
-    case CREATE_USER_START:
+    case PUSH_USER_START:
       return { ...state, creatingUser: true };
-    case CREATE_USER_SUCCESS:
-      return { ...state, creatingUser: false, loggedIn: true, userInfo: action.payload, userId: action.userId,  };
-    case CREATE_USER_ERROR:
+    case PUSH_USER_SUCCESS:
+      return { ...state, creatingUser: false, loggedIn: true, userInfo: action.payload, userId: action.userId,};
+    case PUSH_USER_ERROR:
       return { ...state, creatingUser: false, error: action.payload };
     
-    case FETCH_USER_INFO_START:
-    case FETCH_USER_INFO_SUCCESS:
-      return { ...state, userInfo: action.payload, userId: action.userId, loading: false, loggedIn: true };
-    case FETCH_USER_INFO_ERROR:
+    case PULL_USER_START:
+      return { ...state, loading: true};
+    case PULL_USER_SUCCESS:
+      return { ...state, loading: false, loggedIn: true };
+    case PULL_USER_ERROR:
       return { ...state, error: action.error, loading: false };
     
-    case FETCH_USER_PRODUCTS_START:
+    case PUSH_PRODUCTS_START:
       return { ...state, loading: true, error: null };
-    case FETCH_USER_PRODUCTS_SUCCESS:
-      return { ...state, userProducts: action.payload, productCount: action.payload.length, loading: false };
-    case FETCH_USER_PRODUCTS_ERROR:
+    case PUSH_PRODUCTS_SUCCESS:
+      return { ...state, products: action.payload, productCount: action.payload.length, loading: false };
+    case PUSH_PRODUCTS_ERROR:
+      return { ...state, error: action.error, loading: false };
+    case GENERATE_PRODUCTS_START:
+      return { ...state, loading: true, error: null };
+    case GENERATE_PRODUCTS_SUCCESS:
+      return { ...state, loading: false };
+    case GENERATE_PRODUCTS_ERROR:
+      return { ...state, error: action.error, loading: false };
+    
+    case PULL_PRODUCTS_START:
+      return { ...state, loading: true, error: null };
+    case PULL_PRODUCTS_SUCCESS:
+      return { ...state,  loading: false };
+    case PULL_PRODUCTS_ERROR:
       return { ...state, error: action.error, loading: false };
     
     case LOGOUT_USER:

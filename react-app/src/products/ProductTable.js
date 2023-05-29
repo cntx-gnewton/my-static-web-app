@@ -4,11 +4,11 @@ import ProductCard from './ProductCard';
 import { useStore } from '../store'; 
 
 const ProductTable = () => {
-  const { userProducts } = useStore();
+  const { products } = useStore();
 
   return (
     <div className="products-table">
-      {userProducts.map(product => (
+      {products.map(product => (
         <ProductCard key={product.name} product={product} />
       ))}
     </div>

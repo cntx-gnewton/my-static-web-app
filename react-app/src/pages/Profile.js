@@ -2,24 +2,26 @@
 import React, { useRef } from 'react';
 import ProductTable from '../products/ProductTable'; 
 import { useStore } from '../store';
-
+import { userDB, runProductPipeline } from '../services';
+  
 const Profile = () => {
-  const { userInfo, userProducts, generateUserProducts } = useStore();
-
+  const {  productActions, productCount, userInfo  } = useStore();
   const fileInputRef = useRef(null);
 
   const openFilePicker = () => {
     fileInputRef.current.click();
   };
-
+  
   const handleFileUpload = async (event) => {
+    console.log('handleFileUpload')
     const files = event.target.files;
     if (files.length > 0) {
         const file = files[0];
-        // Emit the fileUploaded event
-        // const products = await handleUserProducts(file);
-        console.log('userSNP file inputted')
-        generateUserProducts(userInfo, file);
+      const products = await runProductPipeline(file);
+      console.log(`handleFileUpload: id: ${userInfo.id} products ${products}`)
+      await userDB.pushProducts(userInfo.id, products);
+      await productActions.push(userInfo.id, products);
+      console.log('handleFileUpload: pushed')
     } else {
         alert('Please select a file first...');
     }
@@ -27,7 +29,8 @@ const Profile = () => {
 
   return (
     <div className="content-container">
-      {!userProducts.length && (
+      
+      { !productCount && (
         <>
           <div className="content-title-group not-found">
             <h2 className="title">Welcome {userInfo && userInfo.userDetails}!</h2>
