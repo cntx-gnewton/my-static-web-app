@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom'; 
-import { useStore } from '../store';
 import { getUserAuthInfo } from '../services/api';
-import { userDB } from '../services';
+import { useStore, useUserDB } from '../services';
 
 const NavBar = () => {
-  const { userActions, productActions, userInfo, loggedIn, products } = useStore();
+  const { dispatchers, selectors } = useStore();
+  const { userActions, productActions } = dispatchers;
+  const { userInfo, loggedIn, products } = selectors;
+
+  // User DB
+  const { client } = useUserDB();
+
   const profileRedirect = '/profile';
   const homeRedirect = '/home';
   const loginURI = `/.auth/login/aadb2c?post_login_redirect_uri=${profileRedirect}`
@@ -15,7 +20,7 @@ const NavBar = () => {
       const userAuthInfo = await getUserAuthInfo();
       if (userAuthInfo) { // Check if userAuthInfo is not null or undefined
         console.log('User authenticated, logging in');
-        const savedUser = await userDB.pullUser(userAuthInfo.userId);
+        const savedUser = await client.pullUser(userAuthInfo.userId);
         console.log(`User ${savedUser ? 'found' : 'not found'} in database`)
         if (savedUser) {
           await userActions.set(savedUser);

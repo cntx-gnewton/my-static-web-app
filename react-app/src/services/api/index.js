@@ -3,11 +3,10 @@ import { getUserAuthInfo } from './authenticateUser';
 
 function useApi() {
     return {
-        runProductPipeline,
-        getUserAuthInfo
+        pipeline: runProductPipeline,
+        authenticate: getUserAuthInfo
     };
 }
-
 
 export {
     runProductPipeline,

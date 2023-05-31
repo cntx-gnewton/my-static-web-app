@@ -1,6 +1,7 @@
 // store/user.actions.js
-import { userServices } from '../services';
-const { db, api } = userServices();
+import { useApi, useUserDB } from '..';
+const { userDB } = useUserDB();
+const { runProductPipeline } = useApi();
 
 export const SET_USER = '[User] SET_USER';
 export const SET_PRODUCTS = '[User] SET_PRODUCTS';
@@ -12,38 +13,65 @@ export const setProducts = (userProducts) => ({
   type: SET_PRODUCTS, payload: userProducts, 
 });
 
-// PUSH_USER
+/////////////////////////////////////////////
+// User Actions
+/////////////////////////////////////////////
+
+// PUSH
 export const PUSH_USER_START = '[User] PUSH_USER_START';
 export const PUSH_USER_SUCCESS = '[User] PUSH_USER_SUCCESS';
 export const PUSH_USER_ERROR = '[User] PUSH_USER_ERROR';
-// PULL_USER
+// PULL
 export const PULL_USER = '[User] PULL_USER';
 export const PULL_USER_START = '[User] PULL_USER_START';
 export const PULL_USER_SUCCESS = '[User] PULL_USER_SUCCESS';
 export const PULL_USER_ERROR = '[User] PULL_USER_ERROR';
-// LOGOUT_USER
+// LOGOUT
 export const LOGOUT_USER = '[User] LOGOUT_USER';
 
-// PUSH_PRODUCTS
+// ///////////////////////////////////////////
+// Products Actions
+// ///////////////////////////////////////////
+
+// PUSH
 export const PUSH_PRODUCTS = '[Products] PUSH_PRODUCTS';
 export const PUSH_PRODUCTS_START = '[Products] PUSH_PRODUCTS_START';
 export const PUSH_PRODUCTS_SUCCESS = '[Products] PUSH_PRODUCTS_SUCCESS';
 export const PUSH_PRODUCTS_ERROR = '[Products] PUSH_PRODUCTS_ERROR';
-// PULL_PRODUCTS
+// PULL
 export const PULL_PRODUCTS = '[Products] PULL_PRODUCTS';
 export const PULL_PRODUCTS_START = '[Products] PULL_PRODUCTS_START';
 export const PULL_PRODUCTS_SUCCESS = '[Products] PULL_PRODUCTS_SUCCESS';
 export const PULL_PRODUCTS_ERROR = '[Products] PULL_PRODUCTS_ERROR';
-// GENERATE_PRODUCTS
+// GENERATE
 export const GENERATE_PRODUCTS_START = '[Genome] GENERATE_PRODUCTS_START';
 export const GENERATE_PRODUCTS_SUCCESS = '[Genome] GENERATE_PRODUCTS_SUCCESS';
 export const GENERATE_PRODUCTS_ERROR = '[Genome] GENERATE_PRODUCTS_ERROR';
+
+// ///////////////////////////////////////////
+// Survey Actions
+// ///////////////////////////////////////////
+// SHOW
+export const SHOW_SURVEY = '[Survey] SHOW_SURVEY';
+export const showSurvey = () => ({
+  type: SHOW_SURVEY,
+});
+// HIDE
+export const HIDE_SURVEY = '[Survey] HIDE_SURVEY';
+export const hideSurvey = () => ({
+  type: HIDE_SURVEY,
+});
+
+
+// ///////////////////////////////////////////
+// Action Creators
+// ///////////////////////////////////////////
 
 
 // Add async action creators
 export const pullUser = (userId) => async (dispatch) => {
   console.log('actions.pullUser: userId', userId);
-  const userInfo = await db.pullUser(userId);
+  const userInfo = await userDB.pullUser(userId);
   console.log('actions.pullUser: userInfo', userInfo)
   if (userInfo) {
     console.log('actions.pullUser: userInfo found:', userInfo);
@@ -59,7 +87,7 @@ export const pullProducts = (userAuthInfo) => async (dispatch) => {
   const userId = userAuthInfo.userId;
   dispatch({ type: PULL_PRODUCTS_START });
   try {
-    const products = await db.pullProducts(userId);
+    const products = await userDB.pullProducts(userId);
     console.log('pullProducts:', products)
     dispatch({ type: PULL_PRODUCTS_SUCCESS });
     return products;
@@ -73,7 +101,7 @@ export const pushUser = (userAuthInfo) => async (dispatch) => {
   console.log('actions.pushUser: userAuthInfo', userAuthInfo)
   dispatch({ type: PUSH_USER_START });
   try {
-    await db.pushUser(userAuthInfo);
+    await userDB.pushUser(userAuthInfo);
     console.log('^success', userAuthInfo)
     dispatch({ type: PUSH_USER_SUCCESS, payload: userAuthInfo, userId: userAuthInfo.userId});
   } catch (error) {
@@ -85,7 +113,7 @@ export const pushUser = (userAuthInfo) => async (dispatch) => {
 export const generateProducts = (file) => async (dispatch) => {
   dispatch({ type: GENERATE_PRODUCTS_START });
   try {
-    const products = await api.runProductPipeline(file);
+    const products = await runProductPipeline(file);
     if (products) {
       console.log('generateProducts: products', products)
       return products;
@@ -101,7 +129,7 @@ export const pushProducts = (userId, products) => async (dispatch) => {
   dispatch({ type: PUSH_PRODUCTS_START });
   try {
     if (products) {
-      await db.pushProducts(userId, products);
+      await userDB.pushProducts(userId, products);
       dispatch({ type: PUSH_PRODUCTS_SUCCESS, payload: products });
       return products;
     } else {

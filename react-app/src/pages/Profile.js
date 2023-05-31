@@ -1,17 +1,35 @@
 // ./pages/Profile.js
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import ProductTable from '../products/ProductTable'; 
-import { useStore } from '../store';
-import { userDB, runProductPipeline } from '../services';
-  
-const Profile = () => {
-  const {  productActions, productCount, userInfo  } = useStore();
-  const fileInputRef = useRef(null);
+import { useStore, useSurvey, useApi, useUserDB  } from '../services';
+import { Survey } from 'survey-react-ui';
+import 'survey-core/defaultV2.min.css';
 
+const Profile = () => {
+  // Store
+  const { dispatchers, selectors } = useStore();
+  const { productActions } = dispatchers();
+  const { productCount, userInfo } = selectors();
+  // API
+  const { runProductPipeline } = useApi();
+  // Survey
+  const { sendDataToServer, createSurvey } = useSurvey();
+  // Database
+  const { userDB } = useUserDB();
+
+
+  // Survey - Initialization
+  const surveyModel = createSurvey();
+  const handleSurveyCompletion = useCallback((sender) => {
+    sendDataToServer(sender);
+  }, []);
+  surveyModel.onComplete.add(handleSurveyCompletion);
+
+  // API Pipeline - File Upload
+  const fileInputRef = useRef(null);
   const openFilePicker = () => {
     fileInputRef.current.click();
   };
-  
   const handleFileUpload = async (event) => {
     console.log('handleFileUpload')
     const files = event.target.files;
@@ -29,7 +47,6 @@ const Profile = () => {
 
   return (
     <div className="content-container">
-      
       { !productCount && (
         <>
           <div className="content-title-group not-found">
@@ -42,6 +59,7 @@ const Profile = () => {
             <p>
               This is a 5 minute questionnaire that will help us understand your health goals and needs. We will use this
             </p>
+            <Survey model={surveyModel} />
             <br />
             <h2 className='title'>Step 2. SNP Analysis Pipeline</h2>
             <div>

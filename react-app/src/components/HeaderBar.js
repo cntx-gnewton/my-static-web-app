@@ -2,11 +2,12 @@
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 import HeaderBarBrand from './HeaderBarBrand';
-import { useStore } from '../store'; // import useStore
-import { userDB } from '../services';
+import { useUserDB, useStore } from '../services';
 
 const HeaderBar = () => {
-  const { userInfo, products, userId } = useStore(); // get userInfo and userProducts from useStore
+  const { userDB } = useUserDB(); // get userDB from useUserDB
+  const { dispatchers } = useStore(); // get dispatchers and selectors from useStore
+  const { userInfo, products, userId } = dispatchers(); // get userInfo and userProducts from useStore
 
   // Define the log functions
   const logUserInfo = () => { console.log(userInfo); }

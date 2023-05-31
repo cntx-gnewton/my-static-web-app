@@ -22,8 +22,11 @@ import {
   GENERATE_PRODUCTS_START,
   GENERATE_PRODUCTS_SUCCESS,
   GENERATE_PRODUCTS_ERROR,
+
+  SHOW_SURVEY,
+  HIDE_SURVEY,
   
-} from './user.actions';
+} from './actions';
 
 const initialState = {
   userId: null,
@@ -32,6 +35,7 @@ const initialState = {
   creatingUser: false,
   products: [],
   productCount: 0,
+  showSurvey: false,
 };
 
 function reducer(state = initialState, action) {
@@ -78,6 +82,12 @@ function reducer(state = initialState, action) {
     
     case LOGOUT_USER:
       return { ...initialState };
+    
+    case SHOW_SURVEY:
+      return { ...state, showSurvey: true };
+    case HIDE_SURVEY:
+      return { ...state, showSurvey: false };
+
     default:
       return state;
   }

@@ -1,7 +1,7 @@
 // components/ProductsTable.js
 import React from 'react';
 import ProductCard from './ProductCard';
-import { useStore } from '../store'; 
+import { useStore } from '../services/store'; 
 
 const ProductTable = () => {
   const { products } = useStore();

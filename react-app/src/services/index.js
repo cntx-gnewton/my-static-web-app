@@ -1,30 +1,23 @@
 // ./services/index.js
-
 import {
-  runProductPipeline,
-  getUserAuthInfo, 
+  useApi
 } from './api';
  
 import {
-  DatabaseClient,
-  databaseConfigs,
+  useUserDB
 } from './database';
 
-const userDB = new DatabaseClient(databaseConfigs.user);
+import {
+  useSurvey
+} from './survey';
 
-function userServices() {
-  return {
-    api: {
-      getUserAuthInfo: getUserAuthInfo,
-      runProductPipeline: runProductPipeline
-    },
-    db: userDB,
-  }
-};
+import {
+  useStore
+} from './store';
 
 export {
-  userServices,
-  getUserAuthInfo,
-  runProductPipeline,
-  userDB,
+  useApi,
+  useSurvey,
+  useUserDB,
+  useStore
 }
