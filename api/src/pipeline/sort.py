@@ -18,6 +18,10 @@ prd_ings
 prd_ings=prd_ings.loc[prd_ings.dislikes >0]
 prd_ings["like_ratio"]=prd_ings.likes / (prd_ings.likes + prd_ings.dislikes)
 prd_ings.like_ratio.mean()
+
+
+
+
 # TODO: Include alias into ingredient names
 def apply_like_ratio(row):
     ings=literal_eval(row.ingredient_list)
