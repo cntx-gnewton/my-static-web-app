@@ -28,6 +28,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             logging.info(type(file))
             if file:
                 JOB_NAME = file.filename.split('.')[0]
+                
                 pipeline_config = Template().render(
                     template_name="pipeline_template.yml",
                     jinja_vars={'api_path': os.environ['API_PATH']},
@@ -45,12 +46,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                     to_dict=True
                 )
                 job_dir = mkdir(pipeline_config['namespaces']['jobs'])
+                
                 process_23andme(file, job_dir)
                 
                 logging.info(f"File uploaded: {file.filename}")
                 logging.info(f"Running SNPipeline Job")
                 try: 
                     pipeline = SNP_Pipeline(pipeline_config)
+                    
                     pipeline.run_job(job_config)
                     results = pipeline.serialize_products()
                     

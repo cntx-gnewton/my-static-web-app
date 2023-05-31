@@ -5,7 +5,7 @@ from os.path import join
 from .utils.helpers import now
 from .utils.decorators import record_time
 import ast
-
+import logging
 
 import json
 
@@ -98,7 +98,9 @@ class ProductSNPFilter:
         self.job_config = job_config
         self.name = self.job_config['metadata']['name']
         # Grab external resources
-        self.products_path = self.external['products']        
+        self.products_path = self.external['products']
+        self.ingredients_path = self.external['ingredients']   
+        self.ing_df = None       
         # Create Pipeline output directory for User Job
         self.out_dir = join(self.job_dir, self.name)
         # Create filesystem managers
@@ -199,7 +201,10 @@ class ProductSNPFilter:
         # Filter out rows with 2 or more matching items
         start_len = len(self.df)        
         self.df = self.df[self.df['matching_items'] < 1].drop(columns=['matching_items'])
-        removed_products = start_len - len(self.df)      
+        removed_products = start_len - len(self.df)
+        
+        # sort by ingredient likes
+        self.df = self.sort_by_likes(self.df)
         
         # add to filter history
         self.snp_filter_history['filter_ingredients'] = {
@@ -208,9 +213,25 @@ class ProductSNPFilter:
             'remaining_products':len(self.df)
         }
 
-        
+    def sort_by_likes(self, df:pd.DataFrame, granularity:str='product_type'):
+        print('debugging')
+        logging.debug('debugging')
+        logging.info('debugging')
+        if granularity == 'product_type':
+            sorted_products = df.dropna(subset=["ingredient_list", "type"])\
+                .apply(self.__apply_like_ratio, axis=1)\
+                    .groupby("type")\
+                        .apply(lambda x: x.sort_values("like_ratio", ascending=False)).reset_index(drop=True)
+        else:
+            sorted_products = df.dropna(subset=["ingredient_list"])\
+                .apply(self.__apply_like_ratio, axis=1)\
+                    .sort_values("like_ratio", ascending=False)                
+
+        return sorted_products
+
     def save(self):
         self.snp_filter_history['proc_time'] = str(now())
+        self.df = self.sort_by_likes(self.df)
         self.writer.to_excel(self.df, 'snp_filtered_products')
         self.writer.to_json(self.snp_filter_history,'snp_filter_history')
         return self
@@ -222,3 +243,35 @@ class ProductSNPFilter:
     @property
     def filters(self):
         return self.df
+
+    @property
+    def ingredients(self):
+        if self.ing_df is None:
+            self.__load_ingredients()
+        return self.ing_df
+    def __load_ingredients(self):
+        self.ing_df = pd.read_excel(self.ingredients_path)
+        self.ing_df['name'] = self.ing_df['name'].apply(lambda x: str(x).lower().replace(" ","_"))  
+        
+    def __apply_like_ratio(self, product_row):
+        # convert product ingredient list_string to a list
+        ing_list = product_row.ingredient_list
+        
+        ings = ing_list if isinstance(ing_list, list) \
+            else ast.literal_eval(ing_list)
+        
+        # get all of the ingredients in that list
+        prd_ings=self.ingredients.loc[self.ingredients.name.isin(ings)]
+        
+        # remove all ingredients with no likes
+        prd_ings=prd_ings.loc[prd_ings.dislikes >0]
+        
+        # calculate the ingredient like ratio
+        prd_ings["like_ratio"]=prd_ings.likes / (prd_ings.likes + prd_ings.dislikes)
+        
+        # apply the mean ingredient like ratio to the product
+        product_row["like_ratio"]=prd_ings.like_ratio.mean()
+        
+        # return the product
+        return product_row
+    

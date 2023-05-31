@@ -10,9 +10,13 @@ class SNP_Pipeline:
         self,
         pipeline_config:Union[str,dict],
         ) -> None:
+        
+        
         self.pipeline_config = read_yaml(pipeline_config)['snp_pipeline'] if isinstance(pipeline_config,str) else pipeline_config
         self.work_dir = self.pipeline_config['namespaces']['jobs']
         self.config_dir = self.pipeline_config['namespaces']['configs']
+        
+        
         self.snp_condition_processor = SampleConditionRisks(self.pipeline_config)
 
     @property
@@ -37,7 +41,7 @@ class SNP_Pipeline:
             job_config, str) else job_config
         logging.info(f'job_name: {job_config["metadata"]["name"]}')
         
-        # insert quetionnaire filtering results
+        # TODO: insert quetionnaire filtering results
         
         # generate snp_skin_conditions risk_table -> conditions to prevent and
         # harmful ingredients, helpful ingredients

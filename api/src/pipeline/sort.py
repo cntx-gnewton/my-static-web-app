@@ -10,17 +10,6 @@ ing_df['name'] = ing_df['name'].apply(lambda x: str(x).lower().replace(" ","_"))
 
 # Load your Excel file
 prd_df = pd.read_excel(prd_path)
-prd=prd_df.iloc[0]
-ings=literal_eval(prd.ingredient_list)
-prd_ings=ing_df.loc[ing_df.name.isin(ings)]
-prd_ings
-
-prd_ings=prd_ings.loc[prd_ings.dislikes >0]
-prd_ings["like_ratio"]=prd_ings.likes / (prd_ings.likes + prd_ings.dislikes)
-prd_ings.like_ratio.mean()
-
-
-
 
 # TODO: Include alias into ingredient names
 def apply_like_ratio(row):
@@ -30,6 +19,7 @@ def apply_like_ratio(row):
     prd_ings["like_ratio"]=prd_ings.likes / (prd_ings.likes + prd_ings.dislikes)
     row["like_ratio"]=prd_ings.like_ratio.mean()
     return row
+
 qant_list = prd_df.dropna(subset=["ingredient_list"]).apply(apply_like_ratio, axis=1)
 qant_list.sort_values("like_ratio", ascending=False)
     

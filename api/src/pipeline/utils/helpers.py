@@ -44,8 +44,8 @@ class Template:
         Example:
             pipeline_config = Template().render('pipeline_template.yml', {'api_dir': os.getcwd()}, to_yaml=True)
         """
-        self.config_dir = join(get_cwd(), 'configs')
-        self.template_dir = join(self.config_dir, 'templates')
+        self.config_dir = join(get_cwd(), 'configs') if config_dir is None else config_dir
+        self.template_dir = join(self.config_dir, 'templates') if template_dir is None else template_dir
         self.env = Environment(loader=FileSystemLoader(self.template_dir))
 
     def render(
@@ -79,7 +79,10 @@ class Template:
         output_dir = self.config_dir if output_dir is None else output_dir
         
         output_path = join(output_dir, config_name)
-            
+        logging.debug(f'{output_path=}')    
+        print(f'{output_path=}')
+        print(f"{template_name=}")
+        
         template = self.env.get_template(template_name)
         try:
             # for key, value in jinja_vars.items():
