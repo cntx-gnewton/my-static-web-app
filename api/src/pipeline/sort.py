@@ -1,8 +1,8 @@
 import pandas as pd
 from ast import literal_eval
 
-ing_path="/Users/cameronwalker/Documents/GitHub/my-static-web-app/api/src/external/ingredients/v1/ingredients.xlsx"
-prd_path="/Users/cameronwalker/Documents/GitHub/my-static-web-app/api/src/external/products/v2/products.xlsx"
+ing_path=r"C:\Users\greys\projects\azure-swa\my-static-web-app\api\src\external\ingredients\v1\ingredients.xlsx"
+prd_path=r"C:\Users\greys\projects\azure-swa\my-static-web-app\api\src\external\products\v2\products.xlsx"
 
 # Load your Excel file
 ing_df = pd.read_excel(ing_path)
