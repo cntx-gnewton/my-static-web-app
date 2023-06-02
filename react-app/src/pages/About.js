@@ -1,8 +1,6 @@
 import React from 'react';
-import { useSelector } from 'react-redux'; 
 
 const About = () => {
-  const userInfo = useSelector(state => state.userInfo);
 
   return (
     <div className="content-container">
@@ -21,9 +19,6 @@ const About = () => {
             </a>
           </li>
         </ul>
-        <div>
-          <p>User Details: {userInfo && userInfo.userDetails}</p>
-        </div>
       </div>
     </div>
   );

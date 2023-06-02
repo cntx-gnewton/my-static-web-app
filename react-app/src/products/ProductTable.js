@@ -4,7 +4,8 @@ import ProductCard from './ProductCard';
 import { useStore } from '../services/store'; 
 
 const ProductTable = () => {
-  const { products } = useStore();
+  const { selectors } = useStore();
+  const { products } = selectors;
 
   return (
     <div className="products-table">

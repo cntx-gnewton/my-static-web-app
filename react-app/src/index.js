@@ -6,7 +6,7 @@ import App from './App';
 import './styles/index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import * as serviceWorker from './serviceWorker';
-import { store } from './store'; // Assuming you have created a Redux store in a file named 'store.js'
+import store from './services/store/store'; // Assuming you have created a Redux store in a file named 'store.js'
 
 ReactDOM.render(
   <Provider store={store}>

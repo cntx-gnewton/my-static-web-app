@@ -3,8 +3,7 @@ import 'bulma/css/bulma.css';
 import './styles.scss';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { HeaderBar, NavBar, NotFound } from './components';
-import { Home, About } from './pages'
-import Profile from './pages/Profile'
+import { Home, About, Profile, Survey } from './pages'
 
 class App extends Component {
   render() {
@@ -20,6 +19,7 @@ class App extends Component {
                 <Route path="/home" component={Home} />
                 <Route path="/about" component={About} />
                 <Route path="/profile" component={Profile} />
+                <Route exact path="/survey" component={Survey} />
                 <Route exact path="**" component={NotFound} />
               </Switch>
             </Suspense>

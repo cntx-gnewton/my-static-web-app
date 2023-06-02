@@ -105,10 +105,10 @@ export async function addUserProducts(userId, products) {
 }
 
 
-export async function createUserWithProducts(userId, userName, products) {
+export async function createUserWithProducts(userId, displayName, products) {
   const user = {
     id: userId,
-    name: userName,
+    name: displayName,
     products: products,
   };
 

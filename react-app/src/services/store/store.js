@@ -29,7 +29,8 @@ import {
 } from './actions';
 
 const initialState = {
-  userId: null,
+  id: null,
+  name: null,
   userInfo: null,
   loggedIn: false,
   creatingUser: false,

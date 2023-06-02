@@ -6,16 +6,19 @@ import { useDispatch, useSelector } from 'react-redux';
 
 function useDispatchers() {
   const dispatch = useDispatch();
+
   const surveyActions = {
     show: useCallback(() => { dispatch(actions.showSurvey()); }, [dispatch]),
     hide: useCallback(() => { dispatch(actions.hideSurvey()); }, [dispatch]),
   }
+
   const userActions = {
     set: useCallback((userInfo) => { dispatch(actions.setUser(userInfo)); }, [dispatch]),
     push: useCallback((userInfo) => { dispatch(actions.pushUser(userInfo)); }, [dispatch]),
     pull: useCallback((userId) => { dispatch(actions.pullUser(userId)); }, [dispatch]),
     logout: useCallback(() => { dispatch(actions.logoutUser()); }, [dispatch]),
   }
+  
   const productActions = {
     set: useCallback((products) => { dispatch(actions.setProducts(products)); }, [dispatch]),
     push: useCallback((userId, products) => { dispatch(actions.pushProducts(userId, products)); }, [dispatch]),
@@ -29,8 +32,9 @@ function useDispatchers() {
 }
 
 function useSelectors() {
-  const { creatingUser, loggedIn, userInfo, products, userId, productCount, showSurvey } = useSelector((state) => ({
+  const { creatingUser, loggedIn, userInfo, products, userId, displayName, productCount, showSurvey } = useSelector((state) => ({
     userId: state.userId,
+    displayName: state.displayName,
     userInfo: state.userInfo,
     loggedIn: state.loggedIn,
     creatingUser: state.creatingUser,
@@ -38,9 +42,11 @@ function useSelectors() {
     productCount: state.productCount,
     showSurvey: state.showSurvey,
   }));
+  
   return {
     userInfo,
     userId,
+    displayName,
     products,
     productCount,
     loggedIn,
@@ -53,7 +59,7 @@ export function useStore() {
   const dispatchers = useDispatchers();
   const selectors = useSelectors();
   return {
-    ...dispatchers,
-    ...selectors
+    dispatchers,
+    selectors
   }
 }

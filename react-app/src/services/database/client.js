@@ -20,21 +20,22 @@ class DatabaseClient {
     console.log('db.pushUser', userAuthInfo)
     const user = {
         id: userAuthInfo.userId,
-        name: userAuthInfo.userDetails,
+        displayName: userAuthInfo.displayName,
         products: [],
     };
     const { item } = await this.client
         .database(this.databaseId).container(this.containerId)
         .items.upsert(user);
-    console.log(`Created user :${user.name} | ${user.id}\n`);
+    console.log(`Created user :${user.displayName} | ${user.id}\n`);
   }
   
   async pullUser(userId) {
+    console.log(`db.pullUser: ${userId}`);
     const { resource: user } = await this.client
       .database(this.databaseId).container(this.containerId)
       .item(userId)
       .read();
-    console.log(`db.pullUser: ${user}`);
+    console.log(`^: ${user}`);
     return user;
   }
   
@@ -42,11 +43,13 @@ class DatabaseClient {
     await this.client
         .database(this.databaseId).container(this.containerId)
         .item(userId)
-        .delete();
+      .delete();
+    
     console.log(`Deleted user with id:\n${userId}\n`);
   }
   
   async userExists(userId) {
+    console.log(`db.userExists: ${userId}`);
     try {
       const user = await this.pullUser(userId);
       return !!user;  // convert to boolean: true if user exists, false otherwise
@@ -61,6 +64,7 @@ class DatabaseClient {
     }
   }
   async pullProducts(userId) {
+    console.log(`db.pullProducts: ${userId}`);
     try {
       const { resource: user } = await this.client
         .database(this.databaseId).container(this.containerId)
@@ -93,13 +97,14 @@ class DatabaseClient {
     } catch (error) {
       console.error(`Error getting products for user ${userId}:`, error);
     }
-    }
+  }
+  
   async deleteProducts(userId) {
+    console.log(`db.deleteProducts: ${userId}`);
     try {
         const { resource: user } = await this.client
         .database(this.databaseId).container(this.containerId)
             .item(userId).read();
-        
         user.products = [];
 
         const { item } = await this.client
@@ -110,18 +115,38 @@ class DatabaseClient {
     } catch (error) {console.error(`Error deleting products for user ${userId}:`, error);}
     }
 
-    async productsExist(userId) {
+  async productsExist(userId) {
+      console.log(`db.productsExist: ${userId}`);
         const products = await this.pullProducts(userId);
         return products && products.length > 0 
-    }
+  }
+  
+  async pushSurveyData(userId, surveyData) {
+    console.log(`db.pushSurveyData: ${userId} ${surveyData}`);
 
-    async createContainer() {
+    const { resource: user } = await this.client
+    .database(this.databaseId).container(this.containerId)
+      .item(userId).read();
+    
+    console.log(`db.pushSurveyData: ${userId} | | ${user} | ${surveyData}`);
+
+    // Add survey data to the user document
+    user.survey = surveyData;
+
+    const { item } = await this.client
+      .database(this.databaseId).container(this.containerId)
+      .item(userId)
+      .replace(user);
+  }
+
+  async createContainer() {
         const { partitionKey } = this.partitionKey
         const { container } = await this.client
             .database(this.databaseId)
             .containers.createIfNotExists({
                 id: this.containerId, partitionKey
             })
+        console.log(`Created container:\n${this.containerId}\n`)
     }
     async pullContainer() {
         const { resource: containerDefinition } = await this.client

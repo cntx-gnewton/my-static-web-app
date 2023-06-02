@@ -1,44 +1,33 @@
 // ./pages/Profile.js
-import React, { useRef, useCallback } from 'react';
+import React, { useRef } from 'react';
 import ProductTable from '../products/ProductTable'; 
-import { useStore, useSurvey, useApi, useUserDB  } from '../services';
-import { Survey } from 'survey-react-ui';
-import 'survey-core/defaultV2.min.css';
+import { useStore, useApi } from '../services';
+import { Link } from 'react-router-dom';
+
 
 const Profile = () => {
   // Store
   const { dispatchers, selectors } = useStore();
-  const { productActions } = dispatchers();
-  const { productCount, userInfo } = selectors();
+  const { productActions } = dispatchers;
+  const { productCount, userId, displayName } = selectors;
+
   // API
-  const { runProductPipeline } = useApi();
-  // Survey
-  const { sendDataToServer, createSurvey } = useSurvey();
-  // Database
-  const { userDB } = useUserDB();
-
-
-  // Survey - Initialization
-  const surveyModel = createSurvey();
-  const handleSurveyCompletion = useCallback((sender) => {
-    sendDataToServer(sender);
-  }, []);
-  surveyModel.onComplete.add(handleSurveyCompletion);
+  const { pipeline } = useApi();
 
   // API Pipeline - File Upload
   const fileInputRef = useRef(null);
   const openFilePicker = () => {
     fileInputRef.current.click();
   };
+
   const handleFileUpload = async (event) => {
     console.log('handleFileUpload')
     const files = event.target.files;
     if (files.length > 0) {
         const file = files[0];
-      const products = await runProductPipeline(file);
-      console.log(`handleFileUpload: id: ${userInfo.id} products ${products}`)
-      await userDB.pushProducts(userInfo.id, products);
-      await productActions.push(userInfo.id, products);
+      const products = await pipeline(file);
+      console.log(`handleFileUpload: id: ${userId} products ${products}`)
+      await productActions.push(userId, products);
       console.log('handleFileUpload: pushed')
     } else {
         alert('Please select a file first...');
@@ -50,7 +39,7 @@ const Profile = () => {
       { !productCount && (
         <>
           <div className="content-title-group not-found">
-            <h2 className="title">Welcome {userInfo && userInfo.userDetails}!</h2>
+            <h2 className="title">Welcome {userId && displayName}!</h2>
             <p>
               Congratulations on taking the first step towards a healthier you! We are excited to help you on your journey
             </p>
@@ -59,7 +48,8 @@ const Profile = () => {
             <p>
               This is a 5 minute questionnaire that will help us understand your health goals and needs. We will use this
             </p>
-            <Survey model={surveyModel} />
+            <Link to="/survey">Take Survey</Link>
+            {/* <Survey model={surveyModel} /> */}
             <br />
             <h2 className='title'>Step 2. SNP Analysis Pipeline</h2>
             <div>
@@ -70,7 +60,7 @@ const Profile = () => {
             </div>
           </div>
         </>
-      )}     
+      )}
       <ProductTable />
     </div>
   );

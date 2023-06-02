@@ -1,7 +1,8 @@
 type User @model {
-  uid: ID
-  name: String
+  userId: ID
+  displayName: String
   products: [Product]
+  surveyData: Survey
 }
 
 type Product {
@@ -9,4 +10,9 @@ type Product {
   description: String
   name: String
   type: String
+}
+
+type Survey {
+  FirstName: String
+  LastName: String
 }

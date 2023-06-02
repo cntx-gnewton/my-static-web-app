@@ -39,16 +39,16 @@
       "source": "CNTXUserDatabase",
       "permissions": [
         {
-          "actions": ["read"],
+          "actions": ["read", "create"],
           "role": "anonymous"
         }
       ]
     },
-    "UserDetails": {
+    "Survey": {
       "source": "CNTXUserDatabase",
       "permissions": [
         {
-          "actions": ["read"],
+          "actions": ["read", "create"],
           "role": "anonymous"
         }
       ]

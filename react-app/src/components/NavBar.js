@@ -6,10 +6,10 @@ import { useStore, useUserDB } from '../services';
 const NavBar = () => {
   const { dispatchers, selectors } = useStore();
   const { userActions, productActions } = dispatchers;
-  const { userInfo, loggedIn, products } = selectors;
+  const { userInfo, loggedIn } = selectors;
 
   // User DB
-  const { client } = useUserDB();
+  const { userDB } = useUserDB();
 
   const profileRedirect = '/profile';
   const homeRedirect = '/home';
@@ -19,15 +19,15 @@ const NavBar = () => {
     (async () => {
       const userAuthInfo = await getUserAuthInfo();
       if (userAuthInfo) { // Check if userAuthInfo is not null or undefined
-        console.log('User authenticated, logging in');
-        const savedUser = await client.pullUser(userAuthInfo.userId);
+        console.log(`User authenticated, logging in ${userAuthInfo}`);
+        const savedUser = await userDB.pullUser(userAuthInfo.userId);
         console.log(`User ${savedUser ? 'found' : 'not found'} in database`)
         if (savedUser) {
           await userActions.set(savedUser);
           console.log('User set in store', savedUser)
           if (savedUser.products.length > 0) {
             await productActions.set(savedUser.products);
-            console.log('Products set in store',products)
+            console.log(`Products set in store ${savedUser.products.length}`)
           }
         } else {
           await userActions.push(userAuthInfo);
