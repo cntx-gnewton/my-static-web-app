@@ -3,7 +3,7 @@
 import azure.functions as func
 from os.path import join
 import logging
-
+import json
 from src.pipeline.utils.helpers import *
 from src.pipeline.snp_pipeline import SNP_Pipeline
 
@@ -26,7 +26,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             # Read the uploaded file
             file = req.files.get("file")
             logging.info(type(file))
+            
             if file:
+                
+                surveyDataStr = req.form.get('surveyData')
+                surveyData = json.loads(surveyDataStr) if surveyDataStr else {}
+                logging.info(surveyData)
+                
                 JOB_NAME = file.filename.split('.')[0]
                 pipeline_config = Template().render(
                     template_name="pipeline_template.yml",
@@ -47,13 +53,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 job_dir = mkdir(pipeline_config['namespaces']['jobs'])
                 process_23andme(file, job_dir)
                 
-                logging.info(f"File uploaded: {file.filename}")
+                logging.info(f"File uploaded: {file.filename} {surveyData=}")
                 logging.info(f"Running SNPipeline Job")
                 try: 
-                    pipeline = SNP_Pipeline(pipeline_config)
+                    pipeline = SNP_Pipeline(pipeline_config, surveyData)
                     pipeline.run_job(job_config)
+                    logging.info(f"Pipeline Job Complete")
                     results = pipeline.serialize_products()
-                    
+                    logging.info(f"Results: {results}")
                     return func.HttpResponse(results, mimetype="application/json")
                 except Exception as e:
                     error_msg = f"Pipeline Error: {e}"

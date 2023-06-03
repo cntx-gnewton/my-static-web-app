@@ -1,0 +1,49 @@
+/* This will change the background color and text color of the survey container */
+.sv_main {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* This will style the survey title */
+.sv_title {
+  font-size: 24px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* This will style the survey question title */
+.sv_q_title {
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* This will style the survey question description */
+.sv_q_description {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* This will style the survey question text input */
+.sv_q_text_root input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+}
+
+/* This will style the survey question checkbox list */
+.sv_q_checkbox {
+  color: #333;
+  font-size: 16px;
+}
+
+.sv_q_checkbox input[type=checkbox] {
+  margin-right: 10px;
+}
+
+.sv_q_checkbox input[type=checkbox]:checked {
+  color: #333;
+}

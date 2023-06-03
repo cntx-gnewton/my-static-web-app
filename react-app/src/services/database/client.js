@@ -17,28 +17,33 @@ class DatabaseClient {
     }
 
   async pushUser(userAuthInfo) {
-    console.log('db.pushUser', userAuthInfo)
-    const user = {
-        id: userAuthInfo.userId,
-        displayName: userAuthInfo.displayName,
-        products: [],
-    };
-    const { item } = await this.client
-        .database(this.databaseId).container(this.containerId)
-        .items.upsert(user);
-    console.log(`Created user :${user.displayName} | ${user.id}\n`);
+      console.log('db.pushUser', userAuthInfo)
+      const user = {
+          id: userAuthInfo.userId,
+          displayName: userAuthInfo.displayName,
+          products: [],
+          surveyData: null,
+      };
+      const { resource: insertedItem } = await this.client
+          .database(this.databaseId).container(this.containerId)
+          .items.upsert(user);
+      console.log(`Created user :${user.displayName} | ${user.id}\n`);
+      console.log('Inserted item:', insertedItem);
   }
   
   async pullUser(userId) {
     console.log(`db.pullUser: ${userId}`);
-    const { resource: user } = await this.client
-      .database(this.databaseId).container(this.containerId)
-      .item(userId)
-      .read();
-    console.log(`^: ${user}`);
-    return user;
+    try {
+      const { resource: user } = await this.client
+        .database(this.databaseId).container(this.containerId)
+        .item(userId)
+        .read();
+      console.log(`^: ${user}`);
+      return user;
+    } catch (error) {
+      console.log('db.pullUser: error', error.message)
+    }
   }
-  
   async deleteUser(userId) {
     await this.client
         .database(this.databaseId).container(this.containerId)
@@ -122,17 +127,13 @@ class DatabaseClient {
   }
   
   async pushSurveyData(userId, surveyData) {
-    console.log(`db.pushSurveyData: ${userId} ${surveyData}`);
 
     const { resource: user } = await this.client
     .database(this.databaseId).container(this.containerId)
       .item(userId).read();
-    
-    console.log(`db.pushSurveyData: ${userId} | | ${user} | ${surveyData}`);
-
+    console.log(`db.pushSurveyData: userId:${userId} | | user:${user} | surveyData:${surveyData}`);
     // Add survey data to the user document
-    user.survey = surveyData;
-
+    user.surveyData = surveyData;
     const { item } = await this.client
       .database(this.databaseId).container(this.containerId)
       .item(userId)
@@ -140,14 +141,19 @@ class DatabaseClient {
   }
 
   async createContainer() {
-        const { partitionKey } = this.partitionKey
-        const { container } = await this.client
-            .database(this.databaseId)
-            .containers.createIfNotExists({
-                id: this.containerId, partitionKey
-            })
-        console.log(`Created container:\n${this.containerId}\n`)
+    try {
+      const { partitionKey } = this.partitionKey
+      const { container } = await this.client
+        .database(this.databaseId)
+        .containers.createIfNotExists({
+          id: this.containerId, partitionKey
+        })
+      console.log(`Created container:\n${this.containerId}\n`)
+    } catch (error) {
+      console.error(`Error creating container ${this.containerId}:`, error)
+      return false;
     }
+  }
     async pullContainer() {
         const { resource: containerDefinition } = await this.client
             .database(this.databaseId).container(this.containerId)

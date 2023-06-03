@@ -1,6 +1,6 @@
 import React, { Component, Suspense } from 'react';
 import 'bulma/css/bulma.css';
-import './styles.scss';
+
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { HeaderBar, NavBar, NotFound } from './components';
 import { Home, About, Profile, Survey } from './pages'

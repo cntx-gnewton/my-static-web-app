@@ -4,6 +4,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import {
   SET_USER,
   SET_PRODUCTS,
+  SET_SURVEY,
 
   PUSH_USER_START,
   PUSH_USER_SUCCESS,
@@ -25,6 +26,9 @@ import {
 
   SHOW_SURVEY,
   HIDE_SURVEY,
+  PUSH_SURVEY_START,
+  PUSH_SURVEY_SUCCESS,
+  PUSH_SURVEY_ERROR
   
 } from './actions';
 
@@ -32,39 +36,52 @@ const initialState = {
   id: null,
   name: null,
   userInfo: null,
-  loggedIn: false,
-  creatingUser: false,
   products: [],
+  surveyData: null,
+  
   productCount: 0,
   showSurvey: false,
+  loggedIn: false,
+  creatingUser: false,
 };
 
 function reducer(state = initialState, action) {
   switch (action.type) {
 
     case SET_USER:
-      return { ...state, userInfo: action.payload, userId: action.userId, loggedIn: true };
+      console.log('SET_USER', action.payload.id);
+      return { ...state, userInfo: action.payload, userId: action.payload.id, loggedIn: true };
     case SET_PRODUCTS:
       return { ...state, products: action.payload, productCount: action.payload.length };
-
+    case SET_SURVEY:
+      return { ...state, surveyData: action.payload };
     case PUSH_USER_START:
       return { ...state, creatingUser: true };
     case PUSH_USER_SUCCESS:
-      return { ...state, creatingUser: false, loggedIn: true, userInfo: action.payload, userId: action.userId,};
+      console.log('PUSH_USER_SUCCESS', action.payload.id);
+      return {
+        ...state, creatingUser: false, loggedIn: true,
+        userInfo: action.payload,
+      };
     case PUSH_USER_ERROR:
       return { ...state, creatingUser: false, error: action.payload };
-    
     case PULL_USER_START:
       return { ...state, loading: true};
     case PULL_USER_SUCCESS:
-      return { ...state, loading: false, loggedIn: true };
+      return {
+        ...state, loading: false, loggedIn: true,
+        userInfo: action.payload, userId: action.payload.id, surveyData: action.payload.surveyData
+      };
     case PULL_USER_ERROR:
       return { ...state, error: action.error, loading: false };
     
     case PUSH_PRODUCTS_START:
       return { ...state, loading: true, error: null };
     case PUSH_PRODUCTS_SUCCESS:
-      return { ...state, products: action.payload, productCount: action.payload.length, loading: false };
+      return {
+        ...state, loading: false, 
+        products: action.payload, productCount: action.payload.length
+      };
     case PUSH_PRODUCTS_ERROR:
       return { ...state, error: action.error, loading: false };
     case GENERATE_PRODUCTS_START:
@@ -84,11 +101,18 @@ function reducer(state = initialState, action) {
     case LOGOUT_USER:
       return { ...initialState };
     
+    
     case SHOW_SURVEY:
       return { ...state, showSurvey: true };
     case HIDE_SURVEY:
       return { ...state, showSurvey: false };
-
+    case PUSH_SURVEY_START:
+      return { ...state, loading: true, error: null };
+    case PUSH_SURVEY_SUCCESS:
+      return { ...state, loading: false, surveyData: action.payload };
+    case PUSH_SURVEY_ERROR:
+      return { ...state, error: action.error, loading: false };
+    
     default:
       return state;
   }

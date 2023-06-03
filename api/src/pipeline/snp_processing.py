@@ -131,6 +131,7 @@ class SampleConditionRisks:
     def __init__(
         self,  
         pipeline_config:dict,
+        
         ) -> None:
         """Calculates an snp-skin_condition-risk probability table
         given an snp_sample with 'name'.txt inside a 'work_dir',
@@ -167,7 +168,7 @@ class SampleConditionRisks:
     def ingredient_benefits(self):
         return self.helpful_ingredients
         
-    def process(self,job_config):
+    def process(self,job_config, survey_conditions):
         # read in snp_processing job config file
         if isinstance(job_config,str):
             job = read_yaml(job_config)
@@ -216,6 +217,11 @@ class SampleConditionRisks:
                 filtered_skin_condition_risk_ratios['skin_condition'].tolist()
                 ))
         
+        if survey_conditions is not None and len(survey_conditions)>0:
+            logging.info(f'{self.skin_condition_list=} {survey_conditions=}')
+            self.skin_condition_list = self.skin_condition_list + survey_conditions
+            logging.info(f'{self.skin_condition_list=}')
+            
         write_txt(self.skin_condition_list, join(
             out_dir, 'skin_condition_list.txt'))
         

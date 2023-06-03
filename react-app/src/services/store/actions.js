@@ -6,9 +6,15 @@ const { runProductPipeline } = useApi();
 export const SET_USER = '[User] SET_USER';
 export const SET_PRODUCTS = '[User] SET_PRODUCTS';
 
+export function getUserId(userInfo) {
+  try { return userInfo.userId; }
+  catch (e) { return userInfo['id']; }
+}
+
 export const setUser = (userInfo) => ({
-  type: SET_USER, payload: userInfo, userId: userInfo.userId,
+  type: SET_USER, payload: userInfo, userId: getUserId(userInfo),
 });
+
 export const setProducts = (userProducts) => ({
   type: SET_PRODUCTS, payload: userProducts, 
 });
@@ -61,7 +67,36 @@ export const HIDE_SURVEY = '[Survey] HIDE_SURVEY';
 export const hideSurvey = () => ({
   type: HIDE_SURVEY,
 });
+// SET
+export const SET_SURVEY = '[User] SET_SURVEY';
+export const setSurvey = (userSurvey) => ({
+  type: SET_SURVEY, payload: userSurvey, 
+});
+// PUSH
+export const PUSH_SURVEY_START = '[User] PUSH_SURVEY_START';
+export const PUSH_SURVEY_SUCCESS = '[User] PUSH_SURVEY_SUCCESS';
+export const PUSH_SURVEY_ERROR = '[User] PUSH_SURVEY_ERROR';
 
+export const pushSurvey = (survey, userId) => async (dispatch) => {
+  console.log(`actions.pushSurvey: survey | ${survey}/${survey.data} | userId | ${userId}`)
+  dispatch({ type: PUSH_SURVEY_START });
+  try {
+      const { userDB } = useUserDB(); // Send data to server
+      try {
+        await userDB.pushSurveyData(userId, survey); // Update database
+        // setSurvey(data); // Update local state
+        console.log(`actions.pushSurvey: data | ${survey}`)
+        dispatch({ type: PUSH_SURVEY_SUCCESS, payload: survey });
+      }
+      catch (error) {
+        console.error(`Error pushing survey data for user ${userId}:`, error);
+        dispatch({ type: PUSH_SURVEY_ERROR, payload: error.message });
+      }
+    } catch (error) {
+        console.error(`Error pushing survey data for user ${userId}:`, error);
+        dispatch({ type: PUSH_SURVEY_ERROR, payload: error.message });
+    }
+};
 
 // ///////////////////////////////////////////
 // Action Creators
@@ -70,17 +105,18 @@ export const hideSurvey = () => ({
 
 // Add async action creators
 export const pullUser = (userId) => async (dispatch) => {
-  console.log('actions.pullUser: userId', userId);
-  const userInfo = await userDB.pullUser(userId);
-  console.log('actions.pullUser: userInfo', userInfo)
-  if (userInfo) {
-    console.log('actions.pullUser: userInfo found:', userInfo);
-    dispatch({ type: PULL_USER_SUCCESS });
+  console.log('actions.pullUser: userId', userId)
+  dispatch({ type: PULL_USER_START });
+  try {
+    const userInfo = await userDB.pullUser(userId);
+    console.log(`actions.pullUser: userId: ${userId} userInfo: ${userInfo}`)
+    dispatch({ type: PULL_USER_SUCCESS, payload: userInfo });
     return userInfo;
-  } else {
-    console.log('actions.pullUser: userInfo not_found', userInfo);
-    dispatch({ type: PULL_USER_ERROR, payload: null });
   }
+  catch (error) {
+    console.log(`pullUser: error`)
+    dispatch({ type: PULL_USER_ERROR, payload: null });
+  } 
 };
 
 export const pullProducts = (userAuthInfo) => async (dispatch) => {
@@ -102,20 +138,20 @@ export const pushUser = (userAuthInfo) => async (dispatch) => {
   dispatch({ type: PUSH_USER_START });
   try {
     await userDB.pushUser(userAuthInfo);
-    console.log('^success', userAuthInfo)
-    dispatch({ type: PUSH_USER_SUCCESS, payload: userAuthInfo, userId: userAuthInfo.userId});
+    console.log('^success')
+    dispatch({ type: PUSH_USER_SUCCESS, payload: userAuthInfo});
   } catch (error) {
     console.log('^error', error.message)
     dispatch({ type: PUSH_USER_ERROR, payload: error.message });
   }
 };
 
-export const generateProducts = (file) => async (dispatch) => {
+export const generateProducts = (file, surveyData) => async (dispatch) => {
   dispatch({ type: GENERATE_PRODUCTS_START });
   try {
-    const products = await runProductPipeline(file);
+    const products = await runProductPipeline(file, surveyData);
     if (products) {
-      console.log('generateProducts: products', products)
+      console.log(`generateProducts: products: ${products} | surveyData: ${surveyData}`, )
       return products;
     } else {
       dispatch({ type: GENERATE_PRODUCTS_ERROR, payload: null });

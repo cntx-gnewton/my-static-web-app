@@ -1,5 +1,5 @@
 type User @model {
-  userId: ID
+  id: ID
   displayName: String
   products: [Product]
   surveyData: Survey
@@ -15,4 +15,5 @@ type Product {
 type Survey {
   FirstName: String
   LastName: String
+  SkinConditions: [String]
 }

@@ -8,9 +8,9 @@ const SurveyPage = () => {
   // Store
   const { dispatchers, selectors } = useStore();
   const { surveyActions } = dispatchers;
-  const { userId } = selectors;
+  const { userInfo, userId } = selectors;
   // Survey
-  const { sendDataToServer, createSurvey } = useSurvey();
+  const { createSurvey } = useSurvey();
 
   // History
   const history = useHistory();
@@ -19,9 +19,16 @@ const SurveyPage = () => {
   const surveyModel = createSurvey();
   
   const handleSurveyCompletion = useCallback((sender) => {
-    sendDataToServer(sender, surveyActions, userId);
+    console.log(`handleSurveyCompletion ${userId} ${userInfo['id']} ${userInfo}`)
+    
+    try { surveyActions.push(sender.data, userInfo['id']); } // push survey data to server
+    catch (error) { console.log(error); }
+    console.log(`Survey data pushed to server and set in store ${sender.data}`)
+    surveyActions.show() // hide survey
+    console.log(`Survey hidden`)
     history.push('/profile'); // redirect to profile page
-  }, [surveyActions, history]);
+    console.log(`Redirected to profile page`)
+  }, [ history]);
 
   surveyModel.onComplete.add(handleSurveyCompletion);
 

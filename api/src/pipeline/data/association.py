@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from datasets import Dataset
-
+import logging
 
 
 class GWASCatalog(Dataset):
@@ -22,7 +22,8 @@ class GWASCatalog(Dataset):
                 print(response.text)
                 return None
         except requests.exceptions.RequestException as e:
-            print(f"Error: Request failed due to {e}")
+            logging.error('ahhhh')
+            # print(f"Error: Request failed due to {e}")
             return None
 
     def get_studies(self, params=None):

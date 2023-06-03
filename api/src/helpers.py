@@ -34,12 +34,10 @@ def move_file(input_path: str, output_path: str) -> Optional[None]:
 
     # Check if the file exists at the input path
     if not os.path.exists(mvfile_path):
-        print(f"File 'mvfile' not found at '{input_path}'.")
         return None
 
     # Move the file to the output path
     shutil.move(mvfile_path, os.path.join(output_path, 'mvfile'))
-    print(f"File 'mvfile' moved from '{input_path}' to '{output_path}'.")
 
 def render_jinja_template(env_var: str, template_path: str, output_path: Optional[str] = None) -> bool:
     """
@@ -63,7 +61,6 @@ def render_jinja_template(env_var: str, template_path: str, output_path: Optiona
     """
     # Check if the environment variable exists
     if env_var not in os.environ:
-        print(f"Environment variable '{env_var}' not found.")
         return None
 
     # Load the Jinja2 template

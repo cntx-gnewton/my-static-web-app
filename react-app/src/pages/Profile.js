@@ -9,7 +9,7 @@ const Profile = () => {
   // Store
   const { dispatchers, selectors } = useStore();
   const { productActions } = dispatchers;
-  const { productCount, userId, displayName } = selectors;
+  const { productCount, userInfo, displayName, surveyData } = selectors;
 
   // API
   const { pipeline } = useApi();
@@ -23,11 +23,14 @@ const Profile = () => {
   const handleFileUpload = async (event) => {
     console.log('handleFileUpload')
     const files = event.target.files;
+
     if (files.length > 0) {
-        const file = files[0];
-      const products = await pipeline(file);
-      console.log(`handleFileUpload: id: ${userId} products ${products}`)
-      await productActions.push(userId, products);
+      const file = files[0];
+      
+      const products = await pipeline(file, surveyData);
+      console.log(`handleFileUpload: id: ${userInfo.id} products ${products}`)
+      await productActions.push(userInfo.id, products);
+      await productActions.set(products);
       console.log('handleFileUpload: pushed')
     } else {
         alert('Please select a file first...');
@@ -39,7 +42,7 @@ const Profile = () => {
       { !productCount && (
         <>
           <div className="content-title-group not-found">
-            <h2 className="title">Welcome {userId && displayName}!</h2>
+            <h2 className="title">Welcome {userInfo && displayName}!</h2>
             <p>
               Congratulations on taking the first step towards a healthier you! We are excited to help you on your journey
             </p>

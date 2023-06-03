@@ -32,6 +32,7 @@ def get_cwd(levels=0):
         cwd = dirname(cwd)
     return cwd
 
+
 class Template:
     def __init__(self, template_dir: Optional[str] = None, config_dir: Optional[str] = None) -> None:
         """
@@ -40,7 +41,7 @@ class Template:
         Args:
             template_dir (Optional[str], optional): The template directory. If not provided,
                 the TEMPLATE_PATH environment variable will be used. Defaults to None.
-        
+
         Example:
             pipeline_config = Template().render('pipeline_template.yml', {'api_dir': os.getcwd()}, to_yaml=True)
         """
@@ -77,14 +78,14 @@ class Template:
         config_name = template_name.replace(
             "_template", "") if config_name is None else config_name+'.yml'
         output_dir = self.config_dir if output_dir is None else output_dir
-        
+
         output_path = join(output_dir, config_name)
-            
+
         template = self.env.get_template(template_name)
         try:
             # for key, value in jinja_vars.items():
             #     logging.info(f'rendering {key} {value}')
-                
+
             rendered_config = template.render(**jinja_vars)
         except Exception as e:
             logging.error(f"Error rendering configuration: {e}")
@@ -118,21 +119,20 @@ def append_to_yaml(file_path: str, data: Dict, overwrite: bool = True) -> None:
 
     Returns:
         None: The function returns nothing.
-        
+
     Example: 
         append_dict_to_yaml("/path/to/your/yaml_file.yml", {"key1": "value1", "key2": "value2"}, overwrite=False)    
     """
 
-
-    
     # Read the existing data in the YAML file, if it exists
-    existing_data = {} if not os.path.exists(file_path) else read_yaml(file_path)
+    existing_data = {} if not os.path.exists(
+        file_path) else read_yaml(file_path)
     # add job_process_record metadata
     record = {
         'job_name': data['metadata']['name'],
         'job_number': len(existing_data.keys()) + 1,
         'utc_proc_time': datetime.utcnow().isoformat(),
-        'job':{**data}}
+        'job': {**data}}
     if overwrite:
         # Overwrite the existing data with the new data
         existing_data.update(record)
@@ -148,7 +148,8 @@ def append_to_yaml(file_path: str, data: Dict, overwrite: bool = True) -> None:
     with open(file_path, 'w') as file:
         yaml.safe_dump(existing_data, file,
                        default_flow_style=False, sort_keys=False)
-    print(f"Appended dictionary to '{file_path}' with utc_proc_time added.")
+    # print(f"Appended dictionary to '{file_path}' with utc_proc_time added.")
+
 
 def generate_job_config(name, file_path):
     # Define the YAML structure as a Python dictionary
@@ -170,12 +171,14 @@ def generate_job_config(name, file_path):
     write_yaml(yaml_data, file_path)
     return file_path
 
+
 def now():
     return pd.Timestamp.now(tz='UTC')
 
+
 def assert_exists(path):
     path = str(path)
-    assert isfile(path),f'FILE NOT FOUND: {path}'
+    assert isfile(path), f'FILE NOT FOUND: {path}'
     return path
 
 
@@ -196,7 +199,7 @@ def mkdir(path):
     path = str(path)
     os.makedirs(path, exist_ok=True)
     return path
-import os
+
 
 def split_filepath(filepath):
     head, tail = os.path.split(filepath)
@@ -218,13 +221,13 @@ def read_yaml(file_path):
 def write_yaml(data, file_path):
     with open(file_path, 'w') as f:
         yaml.dump(data, f, default_flow_style=False)
-    print(f'YML WRITE: {file_path}')
+    # print(f'YML WRITE: {file_path}')
 
 
 def write_txt(obj, file_path: str, remove_comments=False):
     with open(file_path, 'w') as f:
         f.write(str(obj))
-    print(f'TXT WRITE: {file_path}')
+    # print(f'TXT WRITE: {file_path}')
 
 
 def process_23andme(input_file, file_path: str) -> None:
@@ -234,13 +237,14 @@ def process_23andme(input_file, file_path: str) -> None:
     # Filter out lines that start with "#"
     filtered_content = "\n".join(
         [line for line in file_content.splitlines() if not line.startswith("#")])
-    
+
     with open(file_path, 'w+') as output_file:
         output_file.write(filtered_content)
-        
-    print(f'23andMe Processed WRITE: {file_path}')
 
-def move_file(input_path: str, output_path: str, rename:str=None) -> Optional[None]:
+    # print(f'23andMe Processed WRITE: {file_path}')
+
+
+def move_file(input_path: str, output_path: str, rename: str = None) -> Optional[None]:
     """
     Move a file called 'mvfile' from the input path to the output path.
 
@@ -254,17 +258,17 @@ def move_file(input_path: str, output_path: str, rename:str=None) -> Optional[No
 
     Returns:
         Optional[None]: Returns None if the file doesn't exist, otherwise it moves the file and returns nothing.
-        
+
     Example:
         move_file("/input_dir/path/file.txt", "/output_dir/path/", rename="new_file_name.txt")
     """
 
     # Get the file's name
     name = os.path.basename(input_path) if rename is None else rename
-    
+
     # Check if the file exists at the input path
     if not os.path.exists(input_path):
-        print(f"File {name} not found at '{input_path}'.")
+        # print(f"File {name} not found at '{input_path}'.")
         return None
 
     # Move the file to the output path
@@ -273,14 +277,14 @@ def move_file(input_path: str, output_path: str, rename:str=None) -> Optional[No
     shutil.move(input_path, output_path)
 
 
-def get_cfd(levels:str=1) -> str:
+def get_cfd(levels: str = 1) -> str:
     """Returns the path to the current folder.
 
     Args:
         levels: the number of levels up from the current folder to return
     Return
         current_file_path: the path to the current folder
-    
+
     Example:
         project_dir = get_current_folder_path(2)
     """
@@ -317,6 +321,7 @@ def find_abs_path(dir_name, relative_path: str) -> Optional[str]:
     # Return None if the 'api' folder is not found
     return None
 
+
 def get_cwd(levels: int = 0) -> str:
     """Returns the path to the current folder.
 
@@ -324,7 +329,7 @@ def get_cwd(levels: int = 0) -> str:
         levels: the number of levels up from the current folder to return
     Return
         current_file_path: the path to the current folder
-    
+
     Example:
         project_dir = get_current_folder_path(2)
     """

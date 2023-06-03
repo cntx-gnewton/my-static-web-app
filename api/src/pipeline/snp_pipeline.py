@@ -1,7 +1,6 @@
 from .snp_processing import SampleConditionRisks
 from .snp_product_filtering import ProductSNPFilter
-from .utils.helpers import *
-from .utils.calcs import min_max_normalization
+from .utils import *
 from os.path import join
 import logging
 
@@ -9,10 +8,19 @@ class SNP_Pipeline:
     def __init__(
         self,
         pipeline_config:Union[str,dict],
+        surveyData: dict = None,
         ) -> None:
+        
         self.pipeline_config = read_yaml(pipeline_config)['snp_pipeline'] if isinstance(pipeline_config,str) else pipeline_config
         self.work_dir = self.pipeline_config['namespaces']['jobs']
         self.config_dir = self.pipeline_config['namespaces']['configs']
+        
+        self.surveyData = surveyData
+        self.survey_conditions = None
+        if self.surveyData is not None and 'SkinConditions' in self.surveyData.keys():
+            self.survey_conditions = self.surveyData['SkinConditions']
+        logging.info(f'initialized Product Pipeline with {self.survey_conditions=}')    
+        
         self.snp_condition_processor = SampleConditionRisks(self.pipeline_config)
 
     @property
@@ -36,13 +44,14 @@ class SNP_Pipeline:
         job_config = read_yaml(job_config) if isinstance(
             job_config, str) else job_config
         logging.info(f'job_name: {job_config["metadata"]["name"]}')
-        
-        # insert quetionnaire filtering results
-        
+
         # generate snp_skin_conditions risk_table -> conditions to prevent and
         # harmful ingredients, helpful ingredients
-        self.snp_condition_processor.process(job_config)
-
+        self.snp_condition_processor.process(job_config, self.survey_conditions)
+        
+        # insert quetionnaire filtering results
+        if self.surveyData:
+            skin_conditions = self.surveyData['SkinConditions']
         # Start Filtering Products
         snp_product_filter = ProductSNPFilter(
             self.pipeline_config,
@@ -58,7 +67,12 @@ class SNP_Pipeline:
         snp_product_filter.filter_ingredients(
             self.snp_condition_processor.ingredient_risks
             )
-
+        
+        # if self.survey_conditions:
+        #     snp_product_filter.filter_survey_skin_conditions(
+        #         self.survey_conditions
+        #         )
+        
         snp_product_filter.save()
         self.history = snp_product_filter.snp_filter_history
         self.filtered_products = snp_product_filter.df

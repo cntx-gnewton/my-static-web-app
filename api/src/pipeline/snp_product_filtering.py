@@ -5,7 +5,7 @@ from os.path import join
 from .utils.helpers import now
 from .utils.decorators import record_time
 import ast
-
+import logging
 
 import json
 
@@ -56,7 +56,7 @@ class FilterWriter:
 
     def mk_write_path(self, step: str, file_type: str):
         path=join(self.out_dir, step+file_type)
-        print(f'WRITING - {path}')
+        # print(f'WRITING - {path}')
         return path
 
     def to_excel(self, df, step, index=False):
@@ -132,11 +132,13 @@ class ProductSNPFilter:
         # Remove any numbers or percentage signs from the ingredient list column
         df['ingredient_list'] = df['ingredient_list'].str.replace(r'\d+[%]?', '', regex=True)
              
-        print('loaded input')
+        # print('loaded input')
         return df
     
     @record_time
     def filter_concerns(self, skin_condition_list:list):
+        # print(skin_condition_list)
+        logging.info(skin_condition_list)
         start_len = len(self.df)
         mask = self.df['concern_list'].fillna('na').apply(lambda x: any(condition in x for condition in skin_condition_list ))        
         self.df = self.df[mask]
@@ -150,7 +152,7 @@ class ProductSNPFilter:
         
     @record_time
     def exclude(self, filter_col, filter_item):
-        print(f'Running exclusive product {filter_item=}')
+        # print(f'Running exclusive product {filter_item=}')
         start_len = len(self.df)
         self.df = self.df[self.df[filter_col].apply(lambda x: filter_item not in str(x))]
         # add to filter history
@@ -164,7 +166,7 @@ class ProductSNPFilter:
     
     @record_time
     def include(self, filter_col, filter_item):
-        print(f'Running inclusive product {filter_item=}')
+        # print(f'Running inclusive product {filter_item=}')
         start_len = len(self.df)
         # Filter the rows based on the condition
         self.df = self.df[self.df[filter_col].apply(lambda x: filter_item in str(x))]
@@ -208,6 +210,20 @@ class ProductSNPFilter:
             'remaining_products':len(self.df)
         }
 
+    @record_time
+    def filter_survey_skin_conditions(self,conditions:list):
+        # print(conditions)
+        logging.info(conditions)
+        start_len = len(self.df)
+        mask = self.df['concern_list'].fillna('na').apply(lambda x: any(condition in x for condition in conditions ))        
+        self.df = self.df[mask]
+        removed_products = start_len - len(self.df)
+        # add to filter history
+        self.snp_filter_history['filter_survey_concerns'] = {
+            'survey_concerns':conditions,
+            'removed_products':removed_products,
+            'remaining_products':len(self.df)
+        }
         
     def save(self):
         self.snp_filter_history['proc_time'] = str(now())

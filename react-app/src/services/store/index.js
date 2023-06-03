@@ -10,6 +10,8 @@ function useDispatchers() {
   const surveyActions = {
     show: useCallback(() => { dispatch(actions.showSurvey()); }, [dispatch]),
     hide: useCallback(() => { dispatch(actions.hideSurvey()); }, [dispatch]),
+    set:  useCallback((surveyData) => { dispatch(actions.setSurvey(surveyData)); }, [dispatch]),
+    push: useCallback((survey, userId) => { dispatch(actions.pushSurvey(survey, userId)); }, [dispatch]),
   }
 
   const userActions = {
@@ -32,7 +34,7 @@ function useDispatchers() {
 }
 
 function useSelectors() {
-  const { creatingUser, loggedIn, userInfo, products, userId, displayName, productCount, showSurvey } = useSelector((state) => ({
+  const { creatingUser, loggedIn, userInfo, products, userId, displayName, productCount, showSurvey, surveyData } = useSelector((state) => ({
     userId: state.userId,
     displayName: state.displayName,
     userInfo: state.userInfo,
@@ -41,8 +43,9 @@ function useSelectors() {
     products: state.products,
     productCount: state.productCount,
     showSurvey: state.showSurvey,
+    surveyData: state.surveyData,
   }));
-  
+
   return {
     userInfo,
     userId,
@@ -51,7 +54,8 @@ function useSelectors() {
     productCount,
     loggedIn,
     creatingUser,
-    showSurvey
+    showSurvey,
+    surveyData
   }
 }
 

@@ -4,48 +4,70 @@ import { getUserAuthInfo } from '../services/api';
 import { useStore, useUserDB } from '../services';
 
 const NavBar = () => {
+  const { userDB } = useUserDB(); // get userDB from useUserDB
   const { dispatchers, selectors } = useStore();
-  const { userActions, productActions } = dispatchers;
+  const { userActions, productActions, surveyActions } = dispatchers;
   const { userInfo, loggedIn } = selectors;
-
-  // User DB
-  const { userDB } = useUserDB();
 
   const profileRedirect = '/profile';
   const homeRedirect = '/home';
   const loginURI = `/.auth/login/aadb2c?post_login_redirect_uri=${profileRedirect}`
+  
+  const signUpUser = async (userAuthInfo) => {
+    console.log('Initializing user', userAuthInfo.userId)
+    await new Promise(resolve => {
+      userActions.push(userAuthInfo);
+      resolve();
+    })
+    .then(() => {
+      console.log('User database updated', userAuthInfo.userId);
+      return new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds
+    })
+    .then(() => {
+      return userDB.pullUser(userAuthInfo.userId);
+    })
+      .then(savedUser => {
+      console.log('User pulled from database', savedUser);
+      userActions.set(savedUser);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
+
+  const loginUser = async (savedUser) => {
+    try {
+      // set user info in store
+      await userActions.set(savedUser); 
+      // set products and survey data in store
+      if (savedUser.products && savedUser.products.length > 0) {
+        console.log(`Products found in db ${savedUser.products.length}`)
+        await productActions.set(savedUser.products);
+      }
+      if (savedUser.surveyData ) {
+        console.log(`SurveyData found in db ${savedUser.surveyData}`)
+        await surveyActions.set(savedUser.surveyData);
+      }
+    } catch (error) { console.log(error); }
+  }
+
+  const logoutUser = () => {
+    userActions.logout(); 
+    window.location.href = `/.auth/logout?post_logout_redirect_uri=${homeRedirect}`;
+  };
 
   useEffect(() => {
     (async () => {
       const userAuthInfo = await getUserAuthInfo();
-      if (userAuthInfo) { // Check if userAuthInfo is not null or undefined
+      if (userAuthInfo) {
         console.log(`User authenticated, logging in ${userAuthInfo}`);
         const savedUser = await userDB.pullUser(userAuthInfo.userId);
-        console.log(`User ${savedUser ? 'found' : 'not found'} in database`)
-        if (savedUser) {
-          await userActions.set(savedUser);
-          console.log('User set in store', savedUser)
-          if (savedUser.products.length > 0) {
-            await productActions.set(savedUser.products);
-            console.log(`Products set in store ${savedUser.products.length}`)
-          }
-        } else {
-          await userActions.push(userAuthInfo);
-          console.log('User updated in database');
-        }
-      } else {
-        console.log('Not logged in');
+        if (savedUser) { await loginUser(savedUser) }
+        else { await signUpUser(userAuthInfo); }
       }
+      else { console.log('Not logged in'); }
     })();
-  }, []); // Add initializeUser to the dependency array
-
-
-  // Handle logout
-  const handleLogout = () => {
-    userActions.logout(); // clear user data from the store
-    // redirect to logout URI
-    window.location.href = `/.auth/logout?post_logout_redirect_uri=${homeRedirect}`;
-  };
+  }, []);
 
   return (
     <div className="column is-2">
@@ -63,19 +85,20 @@ const NavBar = () => {
       <nav className="menu auth">
         <p className="menu-label">Auth</p>
         <div className="menu-list auth">
-          { !loggedIn && <a href={loginURI}>Login</a>}
-          { loggedIn && <button onClick={handleLogout}>Logout</button>}
+          {!loggedIn && <a href={loginURI}>Login</a>}
+          {loggedIn && <button onClick={logoutUser}>Logout</button>}
         </div>
       </nav>
       {userInfo && (
         <div>
           <div className="user">
-             <Link to="/profile">{userInfo && userInfo.name}</Link>
+            <Link to="/profile">{userInfo && userInfo.name}</Link>
           </div>
         </div>
       )}
     </div>
   );
 };
+
 
 export default NavBar;

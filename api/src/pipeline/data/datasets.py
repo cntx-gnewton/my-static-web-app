@@ -438,7 +438,7 @@ class Product(Dataset):
         # data = pd.DataFrame(data)
 
         # save
-        print(f"saving {self.cfg['collections']['processed']}")
+        # print(f"saving {self.cfg['collections']['processed']}")
         self.write(
             data, 
             collection_name, 

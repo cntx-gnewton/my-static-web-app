@@ -16,7 +16,7 @@ def to_literal(x):
         return ast.literal_eval(x)
     except Exception as e:
         print(e)
-        print(f'{x} | {type(x)}: is not a literal')
+        # print(f'{x} | {type(x)}: is not a literal')
         return np.nan
 
 def safe_literal_eval(s):
@@ -78,10 +78,10 @@ def set_list_id(x, id_table):
 def n_nulls(df):
     if isinstance(df, pd.DataFrame):
         nulls = df.isnull().sum().sum()
-        print(nulls, f' - {round(nulls/len(df)*100,2)}% null in dataframe')
+        # print(nulls, f' - {round(nulls/len(df)*100,2)}% null in dataframe')
     elif isinstance(df, pd.Series):
         nulls = df.isnull().sum()
-        print(nulls, f' - {round(nulls/len(df)*100,2)}% null in series')
+        # print(nulls, f' - {round(nulls/len(df)*100,2)}% null in series')
     else:
         print('Not a dataframe or series')
 

@@ -1,8 +1,9 @@
 // Filename: services\api\analyzeUser.js
 // Description: Runs the api call to the backend to analyze the user's genome
-export const runProductPipeline = async (file) => {
+export const runProductPipeline = async (file, surveyData) => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('surveyData', JSON.stringify(surveyData));
     try {
         const response = await fetch('/api/newjob', {
             method: 'POST',
