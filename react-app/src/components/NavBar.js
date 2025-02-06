@@ -1,91 +1,71 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
-import * as cosmosDB from '../services/database';
+import React, { useEffect } from 'react';
+import { NavLink, Link } from 'react-router-dom'; 
+import { useStore } from '../store';
+import { getUserAuthInfo } from '../services/api';
+import { userDB } from '../services';
 
-const NavBar = (props) => {
-  const providers = ['twitter', 'github', 'aad'];
-  const redirect = window.location.pathname;
-  const [userInfo, setUserInfo] = useState(); // https://stackoverflow.com/questions/53165945/what-is-usestate-in-react
+const NavBar = () => {
+  const { userActions, productActions, userInfo, loggedIn, products } = useStore();
+  const profileRedirect = '/profile';
+  const homeRedirect = '/home';
+  const loginURI = `/.auth/login/aadb2c?post_login_redirect_uri=${profileRedirect}`
 
   useEffect(() => {
     (async () => {
-      setUserInfo(await getUserInfo());
-      await cosmosDB.list();
+      const userAuthInfo = await getUserAuthInfo();
+      if (userAuthInfo) { // Check if userAuthInfo is not null or undefined
+        console.log('User authenticated, logging in');
+        const savedUser = await userDB.pullUser(userAuthInfo.userId);
+        console.log(`User ${savedUser ? 'found' : 'not found'} in database`)
+        if (savedUser) {
+          await userActions.set(savedUser);
+          console.log('User set in store', savedUser)
+          if (savedUser.products.length > 0) {
+            await productActions.set(savedUser.products);
+            console.log('Products set in store',products)
+          }
+        } else {
+          await userActions.push(userAuthInfo);
+          console.log('User updated in database');
+        }
+      } else {
+        console.log('Not logged in');
+      }
     })();
-  }, []);
+  }, []); // Add initializeUser to the dependency array
 
-  async function getUserInfo() {
-    try {
-      const response = await fetch('/.auth/me');
-      const payload = await response.json();
-      const { clientPrincipal } = payload;
-      return clientPrincipal;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('No profile could be found');
-      return undefined;
-    }
-  }
-  // async function list() {
 
-  //   const query = `
-  //       {
-  //         people {
-  //           items {
-  //             id
-  //             Name
-  //           }
-  //         }
-  //       }`;
-        
-  //   const endpoint = '/data-api/graphql';
-  //   const response = await fetch(endpoint, {
-  //       method: 'POST',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify({ query: query })
-  //   });
-  //   try {
-  //     const result = await response.json();
-  //     console.table(result.data.people.items);
-  //   }
-  //   catch (error) {
-  //     console.error('Error list()'+error);
-  //   }
-  // }
+  // Handle logout
+  const handleLogout = () => {
+    userActions.logout(); // clear user data from the store
+    // redirect to logout URI
+    window.location.href = `/.auth/logout?post_logout_redirect_uri=${homeRedirect}`;
+  };
 
   return (
     <div className="column is-2">
-      {/* <button  onClick={ list() }>List</button> */}
       <nav className="menu">
         <p className="menu-label">Menu</p>
         <ul className="menu-list">
-          <NavLink to="/products" activeClassName="active-link">
-            Products
+          <NavLink to="/home" activeClassName="active-link">
+            Home
           </NavLink>
           <NavLink to="/about" activeClassName="active-link">
             About
           </NavLink>
         </ul>
-        {props.children}
       </nav>
       <nav className="menu auth">
         <p className="menu-label">Auth</p>
         <div className="menu-list auth">
-          {!userInfo &&
-            providers.map((provider) => (
-              <a key={provider} href={`/.auth/login/${provider}?post_login_redirect_uri=${redirect}`}>
-                {provider}
-              </a>
-            ))}
-          {userInfo && <a href={`/.auth/logout?post_logout_redirect_uri=${redirect}`}>Logout</a>}
+          { !loggedIn && <a href={loginURI}>Login</a>}
+          { loggedIn && <button onClick={handleLogout}>Logout</button>}
         </div>
       </nav>
       {userInfo && (
         <div>
           <div className="user">
-            <p>Welcome</p>
-            <p>{userInfo && userInfo.userDetails}</p>
-            <p>{userInfo && userInfo.identityProvider}</p>
+             <Link to="/profile">{userInfo && userInfo.name}</Link>
           </div>
         </div>
       )}

@@ -1,0 +1,12 @@
+type User @model {
+  uid: ID
+  name: String
+  products: [Product]
+}
+
+type Product {
+  brand: String
+  description: String
+  name: String
+  type: String
+}

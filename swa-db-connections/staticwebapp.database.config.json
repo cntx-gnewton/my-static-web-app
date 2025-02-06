@@ -1,0 +1,57 @@
+{
+  "$schema": "https://github.com/Azure/data-api-builder/releases/download/v0.6.14/dab.draft.schema.json",
+  "data-source": {
+    "database-type": "cosmosdb_nosql",
+    "options": {
+      "database": "CNTXUserDatabase",
+      "schema": "staticwebapp.database.schema.gql"
+    },
+    "connection-string": "AccountEndpoint=https://cntxsql.documents.azure.com:443/;AccountKey=jwfcBnHV4UTbU608w76OBGpoJje0mSVUwksfrFcoJFQCOsTf2ZY8JCXSowfyzqkwrxr2tr1VMHvjACDbQfhJKg==;"
+  },
+  "runtime": {
+    "graphql": {
+      "allow-introspection": true,
+      "enabled": true,
+      "path": "/graphql"
+    },
+    "host": {
+      "mode": "production",
+      "cors": {
+        "origins": ["*"],
+        "allow-credentials": false
+      },
+      "authentication": {
+        "provider": "StaticWebApps"
+      }
+    }
+  },
+  "entities": {
+    "User": {
+      "source": "CNTXUserDatabase",
+      "permissions": [
+        {
+          "actions": ["read"],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "Product": {
+      "source": "CNTXUserDatabase",
+      "permissions": [
+        {
+          "actions": ["read"],
+          "role": "anonymous"
+        }
+      ]
+    },
+    "UserDetails": {
+      "source": "CNTXUserDatabase",
+      "permissions": [
+        {
+          "actions": ["read"],
+          "role": "anonymous"
+        }
+      ]
+    }
+  }
+}

@@ -9,10 +9,6 @@
     "connection-string": "AccountEndpoint=https://cntxsql.documents.azure.com:443/;AccountKey=jwfcBnHV4UTbU608w76OBGpoJje0mSVUwksfrFcoJFQCOsTf2ZY8JCXSowfyzqkwrxr2tr1VMHvjACDbQfhJKg==;"
   },
   "runtime": {
-    "rest": {
-      "enabled": true,
-      "path": "/rest"
-    },
     "graphql": {
       "allow-introspection": true,
       "enabled": true,

@@ -1,0 +1,11 @@
+metadata:
+  name: {{ name }}
+  namespace: {{ job_dir }}/{{ name }}
+  config: {{ job_dir }}/{{ name }}.yml
+risk_threshold: 0.3
+delimiter: \t
+names:
+  - SNP
+  - Chromosome
+  - Position
+  - Genotype

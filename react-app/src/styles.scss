@@ -170,3 +170,60 @@ button.link {
   border: none;
   cursor: pointer;
 }
+
+
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+  background-color: #f5f5f5;
+}
+
+.home-title-group {
+  text-align: center;
+}
+
+.home-title {
+  font-size: 3em;
+  color: #333;
+}
+
+.home-motto {
+  font-size: 1.5em;
+  color: #777;
+}
+
+.cosmos-buttons {
+  height: 1vh;
+  /* Adjust this value to lower the buttons */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  /* This will center the buttons horizontally */
+}
+
+.cosmos-buttons button {
+  margin-top: 50px;
+  margin-right: 10px;
+  /* This will add space to the right of each button */
+  padding: 10px 20px;
+  /* Adjust padding for larger buttons */
+  font-size: 16px;
+  /* Adjust font size for larger text */
+  color: #fff;
+  background-color: #007BFF;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.cosmos-buttons button:last-child {
+  margin-right: 0;
+  /* This will remove the margin from the last button */
+}
+.cosmos-buttons button:hover {
+  background-color: #0056b3;
+}
